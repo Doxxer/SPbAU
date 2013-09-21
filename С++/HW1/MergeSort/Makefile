@@ -1,12 +1,15 @@
 APPNAME = main.out
 CC = clang++
-CFLAGS = -std=c++0x -c -Wextra
+CFLAGS = -c -Wextra
 
-all: clean main.o
-	$(CC) main.o -o $(APPNAME)
+all: main.o mergesort.o
+	$(CC) main.o mergesort.o -o $(APPNAME)
 	
-main.o: main.cpp
-	$(CC) $(CFLAGS) main.cpp -o main.o
+main.o: main.cpp mergesort.h
+	$(CC) $(CFLAGS) mains.cpp -o main.o
+
+mergesort.o: mergesort.cpp mergesort.h
+	$(CC) $(CFLAGS) mergesort.cpp -o mergesort.o
 
 clean:
 	rm -f *.o *.out *.s $(APPNAME)
