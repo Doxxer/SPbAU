@@ -1,13 +1,18 @@
 #include "mergesort.h"
 
-void merge(int* a, int p, int q, int r, int* buffer)
+void copyArray(int* source, size_t sourceStartIndex, int* dest, size_t destStartIndex, size_t count)
 {
-	int n1 = q - p + 1;
+	for (size_t i = 0; i < count; i++)
+		*(dest + destStartIndex + i) = *(source + sourceStartIndex + i);
+}
+
+void merge(int* a, size_t p, size_t q, size_t r, int* buffer)
+{
+	size_t n1 = q - p + 1;
 	
-	for (int i = 0; i < n1; i++)
-		*(buffer + i) = *(a + p + i);
+	copyArray(a, p, buffer, 0, n1);
 	
-	int i = 0, j = q + 1, k = p;
+	size_t i = 0, j = q + 1, k = p;
 	for (; i < n1 && j < r + 1; k++) {
 		if (*(buffer + i) <= *(a + j)) {
 			*(a+k) = *(buffer + i);
@@ -18,23 +23,17 @@ void merge(int* a, int p, int q, int r, int* buffer)
 		}
 	}
 
-	if (i < n1) {
-		for (int t = i; t < n1; t++, k++) {
-			*(a+k) = *(buffer + t);
-		}
-	} else
-	{
-		for (int t = j; t < r + 1; t++, k++) {
-			*(a+k) = *(a+t);
-		}
-	}
+	if (i < n1)
+		copyArray(buffer, i, a, k, n1 - i);
+	else
+		copyArray(a, j, a, k, r + 1 - j);
 }
 
-void mergesort(int* a, int l, int r, int* buffer)
+void mergesort(int* a, size_t l, size_t r, int* buffer)
 {
 	if (l < r)
 	{
-		int q = (l+r)/2;
+		size_t q = (l+r)/2;
 		mergesort(a, l, q, buffer);
 		mergesort(a, q+1, r, buffer);
 		merge(a, l, q, r, buffer);

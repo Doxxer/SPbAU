@@ -15,4 +15,4 @@ clean:
 	rm -f *.o *.out *.s $(APPNAME)
 	
 run:
-	./$(APPNAME)
+	./$(APPNAME) input.txt

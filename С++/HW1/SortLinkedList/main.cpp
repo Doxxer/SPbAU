@@ -1,9 +1,17 @@
 #include <cstdio>
+#include <sys/stat.h>
 #include "mergesort.h"
 
-int main()
-{	
-	freopen("input.txt", "r", stdin);
+bool fileExists(const char* file)
+{
+	struct stat buf;
+	return stat(file, &buf) == 0;
+}
+
+int main (int argc, char **argv)
+{
+	if (argc > 1 && fileExists(argv[1]))
+		freopen(argv[1], "r", stdin);
 	size_t n;
 	scanf("%zd\n", &n);
 		
