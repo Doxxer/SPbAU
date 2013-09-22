@@ -42,5 +42,6 @@ void mergesort(int* a, size_t l, size_t r, int* buffer)
 
 void sort(int *a, size_t n, int* buffer)
 {
-	mergesort(a, 0, n-1, buffer);
+	if (n > 0)
+		mergesort(a, 0, n-1, buffer);
 }

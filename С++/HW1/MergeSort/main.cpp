@@ -20,12 +20,11 @@ int main (int argc, char **argv)
 		freopen(argv[1], "r", stdin);
 	
 	size_t n = 0;
-	scanf("%zd\n", &n);
-	int *a = new int[n], *buffer = new int[n];
+	scanf("%zd", &n);
 	
+	int *a = new int[n], *buffer = new int[n];
 	for(size_t i = 0; i < n; ++i)
 		scanf("%d", a+i);
-	
 	print(a, n);
 	sort(a, n, buffer);
 	print(a, n);

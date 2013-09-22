@@ -64,7 +64,7 @@ Node* merge(Node* left, Node* mid)
 
 Node* sort(Node* list)
 {
-	if (list->next == NULL)
+	if (list == NULL || list->next == NULL)
 		return list;
 	
 	Node* mid = list;
