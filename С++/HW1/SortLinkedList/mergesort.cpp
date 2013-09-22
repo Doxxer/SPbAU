@@ -32,18 +32,18 @@ int length(Node* list)
 Node* merge(Node* left, Node* mid)
 {
 	Node* newLeft = 0;
-    Node* newRight = 0;
+	Node* newRight = 0;
 
 	if (left->value < mid->value) {
 		newLeft = left;
 		left = left->next;
-    } else {
+	} else {
 		newLeft = mid;
 		mid = mid->next;
-    }
-    
+	}
+	
 	newRight = newLeft;
-    while (left && mid) {
+	while (left && mid) {
 		if (left->value < mid->value) {
 			newRight->next = left;
 			left = left->next;
@@ -52,13 +52,13 @@ Node* merge(Node* left, Node* mid)
 			mid = mid->next;
 		}
 		newRight = newRight->next;
-    }
+	}
 	
-    if (left)
-            newRight->next = left;
-    if (mid)
-            newRight->next = mid;
-    
+	if (left)
+			newRight->next = left;
+	if (mid)
+			newRight->next = mid;
+	
 	return newLeft;
 }
 
