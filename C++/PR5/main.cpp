@@ -19,25 +19,9 @@ int main ()
 	assert(v.get_size() == 4);
 	
 	v.resize(10);
-	v.print();
 	
-	v.add(5);
-	v.add(5);
-	v.add(5);
-	assert(v.get_size() == 13);
-	
-	v.resize(2);
-	assert(v.get_size() == 2);
-	
-	v.resize(13);
-	v.print();	
-	
-	Vector p(v);
-	p.print();
-	
-	p.get(3) = 333;
-	assert(p.get(3) == 333);
-	p.print();	
+	Vector z(15);
+	assert(z.get_size() == 15);
 	
 	return 0;
 }

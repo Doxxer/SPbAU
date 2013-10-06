@@ -1,6 +1,6 @@
 APPNAME = main.out
 CC = clang++
-CFLAGS = -c -Wextra -Wall
+CFLAGS = -c -Wextra -Wall -Werror -pedantic
 
 all: main.o vector.o
 	$(CC) main.o vector.o -o $(APPNAME)
@@ -16,3 +16,5 @@ clean:
 	
 run:
 	./$(APPNAME)
+
+.PHONY: clean
