@@ -17,7 +17,7 @@ public:
     void open(std::string const &name, open_mode mode = Read);
     void close();
 
-    int position() const;
+    size_t position() const;
 
     open_mode mode() const;
     bool opened() const;
@@ -35,7 +35,6 @@ public:
     void read(std::string &value);
     void read(char &value);
     void read(long &value);
-    void read(int &value);
     void read(double &value);
     void readline(std::string &value);
 

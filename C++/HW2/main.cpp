@@ -6,7 +6,7 @@
 
 void print_file_info(File const &f)
 {
-    printf("-- Filename: %s, OPENED? - %s (Mode = %d), Position in file = %d, "
+    printf("-- Filename: %s, OPENED? - %s (Mode = %d), Position in file = %ld, "
            "ERROR=%d, EOF=%d\n\n",
            f.name().c_str(), f.opened() ? "True" : "False", f.mode(),
            f.position(), f.error(), f.eof());
@@ -31,10 +31,10 @@ void readint(size_t count)
     std::cout << "====== Read " << count << " int-values." << std::endl;
     File f(my_file, File::Read);
 
-    int l = 0;
+    long l = 0;
     for (size_t i = 0; i < count; ++i) {
         f.read(l);
-        std::cout << "Value = <" << l << ">" << std::endl;
+        std::cout << "Value = <" << int(l) << ">" << std::endl;
         print_file_info(f);
     }
     f.close();

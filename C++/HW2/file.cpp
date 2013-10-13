@@ -17,7 +17,7 @@ File::~File()
     close();
 }
 
-int File::position() const
+size_t File::position() const
 {
     return ftell(file_);
 }
@@ -76,11 +76,6 @@ void File::read(char &value)
 void File::read(long &value)
 {
     if (readable()) fscanf(file_, "%ld", &value);
-}
-
-void File::read(int &value)
-{
-    if (readable()) fscanf(file_, "%d", &value);
 }
 
 void File::read(double &value)
