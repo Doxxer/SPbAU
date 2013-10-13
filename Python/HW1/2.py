@@ -1,5 +1,4 @@
 # coding=utf-8
-# python2.7
 # Функция, вычисляющая произведение двух матриц
 
 from numpy import dot
@@ -24,11 +23,11 @@ def matrix_multiplication(a, b):
 def numpy_matrix_multiplication(a, b):
     return dot(a, b)
 
-# x = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
+#x = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
 # y = [[1,2],[1,2],[3,4]]
 
 x = input("input x: ")
 y = input("input y: ")
 
-print matrix_multiplication(x, y)
-print numpy_matrix_multiplication(x, y)
+print(matrix_multiplication(x, y))
+print(numpy_matrix_multiplication(x, y))
