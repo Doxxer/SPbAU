@@ -19,38 +19,37 @@ public:
 
     open_mode mode() const;
     bool opened() const;
-    bool eof() const;
+    int eof() const;
     int error() const;
     std::string name() const;
 
-    // size_t write(char const *buf, size_t size);
-    // 	size_t write(std::string const &str);
-    // 	size_t write(char value);
-    // 	size_t write(long value);
-    // 	size_t write(unsigned long value);
-    // 	size_t write(double value);
-    //
-    // 	size_t newline();
-    //
-    // 	size_t read(char *buf, size_t size);
-    // 	size_t read(std::string &word);
-    // 	size_t read(char &c);
-    // 	size_t read(long &value);
-    // 	size_t read(unsigned long &value);
-    // 	size_t read(double &value);
-    // 	size_t readline(std::string &line);
+    int write(std::string const &str);
+    int write(char value);
+    int write(int value);
+    int write(long value);
+    int write(double value);
+    int newline();
+
+    int read(std::string &value);
+    int read(char &value);
+    int read(long &value);
+    int read(int &value);
+    int read(double &value);
+    int readline(std::string &value);
 
 private:
+    size_t const buffer_size;
     static char const *const READ;
     static char const *const WRITE;
     static char const *const UPDATE;
     FILE *f;
     bool opened_;
-    bool eof_;
-    int error_;
     open_mode mode_;
     std::string name_;
     File(const File &);
     File &operator=(const File &);
+    int read_format(char const *format, void *value);
+    bool readable() const;
+    bool writable() const;
 };
 #endif /*__FILE_H__*/
