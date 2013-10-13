@@ -1,17 +1,13 @@
 #include "file.hpp"
 #include <cstdio>
+#include <cstring>
 
-char const *const File::READ = "r";
-char const *const File::WRITE = "w";
-char const *const File::UPDATE = "r+";
-
-File::File()
-    : buffer_size(100), f(0), opened_(false), mode_(File::Read), name_("")
+File::File() : file_(NULL), mode_(File::Read), name_("")
 {
 }
 
 File::File(std::string const &name, open_mode mode)
-    : buffer_size(100), f(0), opened_(false), mode_(mode), name_(name)
+    : file_(0), mode_(mode), name_(name)
 {
     open(name_, mode_);
 }
@@ -21,151 +17,126 @@ File::~File()
     close();
 }
 
+int File::position() const
+{
+    return ftell(file_);
+}
+
 void File::open(std::string const &name, open_mode mode)
 {
     close();
-    char const *smode = File::READ;
     mode_ = mode;
     name_ = name;
     switch (mode_) {
         case File::Rewrite:
-            smode = File::WRITE;
+            file_ = fopen(name.c_str(), "w");
             break;
         case File::Update:
-            smode = File::UPDATE;
+            file_ = fopen(name.c_str(), "r+");
             break;
         default:
+            file_ = fopen(name.c_str(), "r");
             break;
     }
-    f = fopen(name.c_str(), smode);
-    opened_ = f != NULL;
 }
 
 bool File::readable() const
 {
-    return opened_ && !eof() && mode_ == File::Read;
+    return opened() && !eof() && mode_ == File::Read;
 }
 
 bool File::writable() const
 {
-    return opened_ && (mode_ == File::Rewrite || mode_ == File::Update);
+    return opened() && (mode_ == File::Rewrite || mode_ == File::Update);
 }
 
-int File::read_format(char const *format, void *value)
+void File::read(std::string &value)
 {
-    int res = 0;
-    if (readable()) {
-        res = fscanf(f, format, value);
-        if (res == EOF) res = 0;
+    if (!readable()) return;
+
+    std::string s;
+    char c;
+    while ((c = fgetc(file_)) == ' ')
+        ;
+
+    s += c;
+    c = fgetc(file_);
+    while (!eof() && c != ' ' && c != '\r' && c != '\n') {
+        s += c;
+        c = fgetc(file_);
     }
-    return res;
+    value = s;
 }
 
-int File::read(std::string &value)
+void File::read(char &value)
 {
-    // magic size =(
-    char *buffer = new char[buffer_size];
-    int res = read_format("%s", buffer);
-    if (res) {
-        value = std::string(buffer);
+    if (readable()) fscanf(file_, "%c", &value);
+}
+
+void File::read(long &value)
+{
+    if (readable()) fscanf(file_, "%ld", &value);
+}
+
+void File::read(int &value)
+{
+    if (readable()) fscanf(file_, "%d", &value);
+}
+
+void File::read(double &value)
+{
+    if (readable()) fscanf(file_, "%lf", &value);
+}
+
+void File::readline(std::string &value)
+{
+    if (!readable()) return;
+
+    std::string s;
+    char c = fgetc(file_);
+
+    while (!eof() && c != '\r' && c != '\n') {
+        s += c;
+        c = fgetc(file_);
     }
-    delete[] buffer;
-    return res;
+    value = s;
 }
 
-int File::read(char &value)
+void File::write(int value)
 {
-    return read_format("%c", &value);
+    if (writable()) fprintf(file_, "%d", value);
 }
 
-int File::read(long &value)
+void File::write(long value)
 {
-    return read_format("%ld", &value);
+    if (writable()) fprintf(file_, "%ld", value);
 }
 
-int File::read(int &value)
+void File::write(double value)
 {
-    return read_format("%d", &value);
+    if (writable()) fprintf(file_, "%lf", value);
 }
 
-int File::read(double &value)
+void File::write(char value)
 {
-    return read_format("%lf", &value);
+    if (writable()) fprintf(file_, "%c", value);
 }
 
-int File::readline(std::string &value)
-{
-    // magic size again =(
-    if (!readable()) return 0;
-    char *buffer = new char[buffer_size];
-    size_t i = 0;
-    for (; i < buffer_size; ++i) {
-        char c = fgetc(f); // File::read(char) maybe?
-        if (c == '\r' || c == '\n' || c == EOF)
-            break;
-        else
-            buffer[i] = c;
-    }
-    if (i) value = std::string(buffer);
-    delete[] buffer;
-    return i;
-}
-
-int File::write(int value)
-{
-    int res = 0;
-    if (writable()) {
-        res = fprintf(f, "%d", value);
-    }
-    return res;
-}
-
-int File::write(long value)
-{
-    int res = 0;
-    if (writable()) {
-        res = fprintf(f, "%ld", value);
-    }
-    return res;
-}
-
-int File::write(double value)
-{
-    int res = 0;
-    if (writable()) {
-        res = fprintf(f, "%lf", value);
-    }
-    return res;
-}
-
-int File::write(char value)
-{
-    int res = 0;
-    if (writable()) {
-        res = fprintf(f, "%c", value);
-    }
-    return res;
-}
-
-int File::newline()
+void File::newline()
 {
     return write('\n');
 }
 
-int File::write(std::string const &str)
+void File::write(std::string const &str)
 {
-    int res = 0;
-    if (writable()) {
-        res = fputs(str.c_str(), f);
-    }
-    return res;
+    if (writable()) fputs(str.c_str(), file_);
 }
 
 void File::close()
 {
-    if (opened_) {
-        fclose(f);
-        opened_ = false;
+    if (opened()) {
+        fclose(file_);
+        file_ = NULL;
     }
 }
 
@@ -176,17 +147,17 @@ File::open_mode File::mode() const
 
 bool File::opened() const
 {
-    return opened_;
+    return file_ != NULL;
 }
 
 int File::eof() const
 {
-    return f ? feof(f) : 0;
+    return file_ ? feof(file_) : 0;
 }
 
 int File::error() const
 {
-    return f ? ferror(f) : 0;
+    return file_ ? ferror(file_) : 0;
 }
 
 std::string File::name() const

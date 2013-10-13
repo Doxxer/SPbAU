@@ -17,38 +17,36 @@ public:
     void open(std::string const &name, open_mode mode = Read);
     void close();
 
+    int position() const;
+
     open_mode mode() const;
     bool opened() const;
     int eof() const;
     int error() const;
     std::string name() const;
 
-    int write(std::string const &str);
-    int write(char value);
-    int write(int value);
-    int write(long value);
-    int write(double value);
-    int newline();
+    void write(std::string const &str);
+    void write(char value);
+    void write(int value);
+    void write(long value);
+    void write(double value);
+    void newline();
 
-    int read(std::string &value);
-    int read(char &value);
-    int read(long &value);
-    int read(int &value);
-    int read(double &value);
-    int readline(std::string &value);
+    void read(std::string &value);
+    void read(char &value);
+    void read(long &value);
+    void read(int &value);
+    void read(double &value);
+    void readline(std::string &value);
 
 private:
-    size_t const buffer_size;
-    static char const *const READ;
-    static char const *const WRITE;
-    static char const *const UPDATE;
-    FILE *f;
-    bool opened_;
+    FILE *file_;
     open_mode mode_;
     std::string name_;
+
     File(const File &);
     File &operator=(const File &);
-    int read_format(char const *format, void *value);
+
     bool readable() const;
     bool writable() const;
 };
