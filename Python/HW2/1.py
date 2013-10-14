@@ -15,5 +15,6 @@ def GreekCapitalAlphabet():
             print(chr(i), end=' ')
     print()
 
+
 GreekCapitalAlphabet()
 GreekLowercaseAlphabet()

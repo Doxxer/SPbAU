@@ -3,6 +3,7 @@
 # RSS
 
 import feedparser
+
 rss = "http://mit.spbau.ru/news/rss"
 x = feedparser.parse(rss).values()
 print(x)

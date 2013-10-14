@@ -1,10 +1,10 @@
 #python3.3
 #coding: utf-8
 # RSS
-from urllib.request import urlopen
 from xml.etree import ElementTree
 
 indent = "    "
+
 
 def print_rss(parent, level):
     print((level * indent + "<level {0:d}>").format(level))

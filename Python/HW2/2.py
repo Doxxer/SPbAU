@@ -1,5 +1,7 @@
+#coding: utf-8
 # python3.3
 # long arithmetic
+
 
 def to_str(a):
     """
@@ -12,6 +14,11 @@ def to_str(a):
 
 
 def norm(s):
+    """
+    Очищает число от ведущих нулей
+    @param s: число в виде строки
+    @return: Очищенное число
+    """
     s = s.lstrip("0")
     return "0" if len(s) == 0 else s
 
@@ -82,7 +89,7 @@ def is_greater_or_equal(a, b):
     @param b: Второе число в виде строки
     @return: a >= b ?
     """
-    return is_greater(a, b) | is_equal(a, b)
+    return not is_less(a, b)
 
 
 def is_less_or_equal(a, b):
@@ -102,7 +109,7 @@ def is_less(a, b):
     @param b: Второе число в виде строки
     @return: a < b ?
     """
-    return is_less_or_equal(a, b) & (not is_equal(a, b))
+    return is_greater(b, a)
 
 
 def long_add(a, b):
@@ -110,7 +117,7 @@ def long_add(a, b):
     Длинное сложение
     @param a: Первое число в виде строки
     @param b: Второе число в виде строки
-    @return:
+    @return: a+b в виде строки
     """
     a, b, size = align_lists(a, b)
     carry = 0
@@ -155,32 +162,85 @@ def long_sub(a, b):
     return "-" + long_sub_unsigned(b, a)
 
 
-def long_mul(a, n):
+def long_mul(a, b):
     """
     Умножение длинного на короткое
     @param a: Длинное число в виде строки
-    @param n: Короткое число в виде числа
+    @param b: Короткое число в виде числа
     @return: Результат умножения в виде строки
     """
+
+    def long_mul_short(x, n):
+        """
+        Умножение длинного на короткое
+        @param x: Длинное число в виде строки
+        @param n: Короткое число в виде числа
+        @return: Результат умножения в виде строки
+        """
+        x, t, size = align_lists(x, "")
+        carry = 0
+        for i in range(0, size):
+            c = carry + x[i] * n
+            x[i] = c % 10
+            carry = c // 10
+        if carry > 0:
+            x.extend([int(k) for k in str(carry)[::-1]])
+        return to_str(x)
+
+    if len(a) < len(b):
+        a, b = b, a
+
+    c = "0"
+    mem = {}
+    for i, digit in enumerate(b[::-1]):
+        digit = int(digit)
+        if digit not in mem:
+            mem[digit] = long_mul_short(a, digit)
+        c = long_add(c, (mem[digit] + "0" * i))
+    return c
+
+
+def long_pow(a, b):
+    """
+    Возведение длинного числа в длинную степень
+    @param a: Длинное число в виде строки
+    @param b: Длинный показатель степени в виде строки
+    @return: Результат a ** b в виде строки
+    """
+    res, cur, n = "1", a, int(b)
+    while n > 0:
+        if n % 2:
+            res = long_mul(res, cur)
+        cur = long_mul(cur, cur)
+        n //= 2
+    return res
+
+
+def long_div_short(a, n):
+    if (is_less(a, str(n))):
+        return "0", a
     a, t, size = align_lists(a, "")
     carry = 0
-    for i in range(0, size):
-        c = carry + a[i] * n
-        a[i] = c % 10
-        carry = c // 10
-    if carry > 0:
-        a.extend([int(x) for x in str(carry)[::-1]])
-    return to_str(a)
+    for i in reversed(range(0, len(a))):
+        cur = a[i] + carry * 10
+        a[i] = cur // n
+        carry = cur % n
+    return to_str(a), carry
 
-x = "0"
-y = "2151234"
-n = 123
 
-print("%s + %s = %s" % (x, y, long_add(x, y)))
-print("%s - %s = %s" % (x, y, long_sub(x, y)))
-print("%s > %s = %s" % (x, y, is_greater(x, y)))
-print("%s == %s = %s" % (x, y, is_equal(x, y)))
-print("%s >= %s = %s" % (x, y, is_greater_or_equal(x, y)))
-print("%s <= %s = %s" % (x, y, is_less_or_equal(x, y)))
-print("%s < %s = %s" % (x, y, is_less(x, y)))
-print("%s * %s = %s" % (x, n, long_mul(x, n)))
+x = "100000000"
+y = "3"
+n = 463
+
+print("%s + %s = %s\n\t%r" % (x, y, long_add(x, y), int(long_add(x, y)) == int(x) + int(y)))
+print("%s - %s = %s\n\t%r" % (x, y, long_sub(x, y), int(long_sub(x, y)) == int(x) - int(y)))
+print("%s > %s = %s\n\t%r" % (x, y, is_greater(x, y), int(is_greater(x, y)) == (int(x) > int(y))))
+print("%s == %s = %s\n\t%r" % (x, y, is_equal(x, y), int(is_equal(x, y)) == (int(x) == int(y))))
+print("%s >= %s = %s\n\t%r" % (x, y, is_greater_or_equal(x, y), int(is_greater_or_equal(x, y)) == (int(x) >= int(y))))
+print("%s <= %s = %s\n\t%r" % (x, y, is_less_or_equal(x, y), int(is_less_or_equal(x, y)) == (int(x) <= int(y))))
+print("%s < %s = %s\n\t%r" % (x, y, is_less(x, y), int(is_less(x, y)) == (int(x) < int(y))))
+print("%s * %s = %s\n\t%r" % (x, y, long_mul(x, y), int(long_mul(x, y)) == (int(x) * int(y))))
+print("%s ** %s = %s\n\t%r" % (x, y, long_pow(x, y), int(long_pow(x, y)) == (int(x) ** int(y)) ))
+
+q, w = long_div_short(x, n)
+print("%s / %s = %s (%s)\n\t%r, %r" % (x, n, q, w, int(x) // n == int(q), int(x) % n == int(w)))
