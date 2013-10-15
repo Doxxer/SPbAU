@@ -23,6 +23,15 @@ def norm(s):
     return "0" if len(s) == 0 else s
 
 
+def to_list(s):
+    """
+    Преобразовывает число в виде строки в инвертированный список цифр
+    @param s: Число в виде строки
+    @return: Развернутый список цифр
+    """
+    return [int(x) for x in s[::-1]]
+
+
 def align_lists(a, b):
     """
     Выравнивает числа, добавляя в конец нули
@@ -30,14 +39,6 @@ def align_lists(a, b):
     @param b: Второй число в виде строки
     @return: Три значения: два списка одинаковой длины и длина списка
     """
-
-    def to_list(s):
-        """
-        Преобразовывает число в виде строки в инвертированный список цифр
-        @param s: Число в виде строки
-        @return: Развернутый список цифр
-        """
-        return [int(x) for x in s[::-1]]
 
     a, b = to_list(norm(a)), to_list(norm(b))
     while len(a) < len(b):
@@ -62,6 +63,8 @@ def is_greater(a, b):
     for i in reversed(range(0, size)):
         if a[i] > b[i]:
             return True
+        if a[i] < b[i]:
+            return False
     return False
 
 
@@ -217,7 +220,7 @@ def long_pow(a, b):
 
 
 def long_div_short(a, n):
-    if (is_less(a, str(n))):
+    if is_less(a, str(n)):
         return "0", a
     a, t, size = align_lists(a, "")
     carry = 0
@@ -228,8 +231,33 @@ def long_div_short(a, n):
     return to_str(a), carry
 
 
-x = "100000000"
-y = "3"
+def long_div(a, b):
+    """
+    Длинное деление
+    @param a: Делимое в строковом виде
+    @param b: Делитель в строковом виде
+    @return: Возвращает частное и остаток в строковом виде
+    """
+    if is_less(a, b):
+        return "0", a
+
+    a, b = norm(a), norm(b)
+    carry, res, i = "", "", 0
+
+    while i < len(a):
+        carry += a[i]
+        i += 1
+        carry = norm(carry)
+        r = 0
+        while is_greater_or_equal(carry, b):
+            carry = long_sub(carry, b)
+            r += 1
+        res += str(r)
+    return norm(res), norm(carry)
+
+
+x = "90"
+y = "32"
 n = 463
 
 print("%s + %s = %s\n\t%r" % (x, y, long_add(x, y), int(long_add(x, y)) == int(x) + int(y)))
@@ -244,3 +272,6 @@ print("%s ** %s = %s\n\t%r" % (x, y, long_pow(x, y), int(long_pow(x, y)) == (int
 
 q, w = long_div_short(x, n)
 print("%s / %s = %s (%s)\n\t%r, %r" % (x, n, q, w, int(x) // n == int(q), int(x) % n == int(w)))
+
+q1, w1 = long_div(x, y)
+print("%s / %s = %s (%s)\n\t%r, %r" % (x, y, q1, w1, int(x) // int(y) == int(q1), int(x) % int(y) == int(w1)))
