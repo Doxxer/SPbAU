@@ -1,5 +1,5 @@
 APPNAME = main.out
-TASK = task4
+TASK = task3
 CC = g++
 # CFLAGS = -c -Weffc++ -Wextra -Wall -pedantic
 CFLAGS = -c -O3

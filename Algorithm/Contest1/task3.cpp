@@ -17,9 +17,9 @@ int main()
     vc stack;
     int i = 0;
 
-    for (; i < n && k; ++i) {
+    for (; i < n; ++i) {
         while (!stack.empty() && stack.back() < s[i] && k) {
-            w stack.pop_back();
+            stack.pop_back();
             k--;
         }
         stack.push_back(s[i]);
