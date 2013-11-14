@@ -1,35 +1,25 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
-#include <cstring>
-
-using namespace std;
-
-typedef vector<char> vc;
+#include <string>
 
 int main()
 {
-    // freopen("input.txt", "r", stdin);
-    string s;
-    int k = 0;
-    cin >> s >> k;
-    int n = (int)s.length();
-    vc stack;
-    int i = 0;
+    std::string number;
+    int left = 0;
+    std::cin >> number >> left;
+    std::vector<char> digit_stack;
 
-    for (; i < n; ++i) {
-        while (!stack.empty() && stack.back() < s[i] && k) {
-            stack.pop_back();
-            k--;
+    for (int i = 0; i < (int)number.length(); ++i) {
+        while (!digit_stack.empty() && digit_stack.back() < number[i] && left != 0) {
+            digit_stack.pop_back();
+            --left;
         }
-        stack.push_back(s[i]);
+        digit_stack.push_back(number[i]);
     }
 
-    for (int j = i; j < n; ++j)
-        stack.push_back(s[j]);
-
-    for (int j = 0; j < stack.size() - k; ++j)
-        printf("%c", stack[j]);
+    for (size_t i = 0; i + left < digit_stack.size(); ++i)
+        printf("%c", digit_stack[i]);
     printf("\n");
     return 0;
 }

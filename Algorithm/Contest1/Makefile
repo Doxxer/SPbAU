@@ -1,8 +1,8 @@
 APPNAME = main.out
 TASK = task3
 CC = g++
-# CFLAGS = -c -Weffc++ -Wextra -Wall -pedantic
-CFLAGS = -c -O3
+CFLAGS = -c -Weffc++ -Wextra -Wall -pedantic
+# CFLAGS = -c -O3
 
 all: main.o
 	$(CC) $(TASK).o -o $(APPNAME)
