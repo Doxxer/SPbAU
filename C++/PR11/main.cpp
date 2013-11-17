@@ -1,56 +1,36 @@
 #include "unique_ptr.cpp"
 #include <iostream>
+#include <stdlib.h>
 
-class Foo {
-public:
-    Foo(int a = 0) : a_(a)
-    {
-        std::cout << "Foo\n";
-    }
-    ~Foo()
-    {
-        std::cout << "~Foo " << a_ << std::endl;
-    }
-    void bar()
-    {
-        std::cout << ++a_ << std::endl;
-    }
-
-private:
-    int a_;
-};
-
-unique_ptr<Foo> func()
+unique_ptr<int> new_int()
 {
-    unique_ptr<Foo> p1(new Foo(15));
-    return p1;
+    return unique_ptr<int>(new int(10));
 }
 
-struct Deleter {
-    void operator()(Foo *p) const
+template <typename T> struct array_deleter {
+    void operator()(T *a)
     {
-        std::cout << "Delete Foo object\n";
-        delete p;
+        delete[] a;
     }
 };
+
+unique_ptr<int, array_deleter<int> > new_int_array()
+{
+    return unique_ptr<int, array_deleter<int> >(new int[10]);
+}
+
+unique_ptr<int, void (*)(void *)> malloc_int()
+{
+    return unique_ptr<int, void (*)(void *)>((int *)malloc(sizeof(int)), &free);
+}
 
 int main()
 {
-    unique_ptr<Foo, Deleter> ptr(new Foo(7), Deleter());
-    ptr.reset(new Foo(1000));
+    unique_ptr<int> v1 = new_int();
 
-    unique_ptr<Foo> p1(new Foo);
-    if (p1)
-        p1->bar();
-
-    {
-        unique_ptr<Foo> temp = func();
-        temp->bar();
-    }
-    unique_ptr<Foo> p2 = p1;
-
-    if (p1)
-        p1->bar();
-
+    unique_ptr<int, array_deleter<int> > v2 = new_int_array();
+    unique_ptr<int, void (*)(void *)> v3 = malloc_int();
+    v1.reset(NULL);                
+    std::cout << *v3 << std::endl;
     return 0;
 }

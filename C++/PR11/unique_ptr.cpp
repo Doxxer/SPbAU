@@ -1,19 +1,16 @@
 #include <cstddef>
 #include <iostream>
 
-template <typename T> struct unique_ptr_ref {
+template <typename T, typename D> struct unique_ptr_ref {
     T *data_;
+    D deleter_;
 
-    explicit unique_ptr_ref(T *a) : data_(a)
+    unique_ptr_ref(T *a, D deleter) : data_(a), deleter_(deleter)
     {
     }
 };
 
 template <typename T> struct default_delete {
-    default_delete()
-    {
-    }
-
     void operator()(T *a)
     {
         delete a;
@@ -22,32 +19,53 @@ template <typename T> struct default_delete {
 
 template <typename T, typename D = default_delete<T> > class unique_ptr {
 public:
-    unique_ptr(T *pointer, D deleter = default_delete<T>()) : data_(pointer), deleter_(deleter)
+    unique_ptr(T *pointer, D deleter = D()) : data_(pointer), deleter_(deleter)
     {
     }
 
     ~unique_ptr()
     {
-        delete_data();
+        reset();
     }
 
-    unique_ptr(unique_ptr &a) : data_(a.release())
+    unique_ptr(unique_ptr &a) : data_(a.release()), deleter_(a.deleter_)
     {
     }
 
-    unique_ptr(unique_ptr_ref<T> ref) : data_(ref.data_)
+    template <typename T1, typename D1>
+    unique_ptr(unique_ptr<T1, D1> &a)
+        : data_(a.release()), deleter_(a.deleter_)
     {
     }
 
     unique_ptr &operator=(unique_ptr &a)
     {
         reset(a.release());
+        deleter_ = a.deleter_;
         return *this;
     }
 
-    template <typename T1> operator unique_ptr_ref<T1>()
+    unique_ptr &operator=(unique_ptr_ref<T, D> ref)
     {
-        return unique_ptr_ref<T1>(this->release());
+        reset(ref.data_);
+        deleter_ = ref.deleter_;
+        return *this;
+    }
+
+    template <typename T1> unique_ptr &operator=(unique_ptr<T1, D> &a)
+    {
+        reset(a.release());
+        deleter_ = a.deleter_;
+        return *this;
+    }
+
+    unique_ptr(unique_ptr_ref<T, D> ref) : data_(ref.data_), deleter_(ref.deleter_)
+    {
+    }
+
+    template <typename T1> operator unique_ptr_ref<T1, D>()
+    {
+        return unique_ptr_ref<T1, D>(this->release(), deleter_);
     }
 
     T *release()
@@ -60,14 +78,9 @@ public:
     void reset(T *pointer = NULL)
     {
         if (pointer != data_) {
-            delete_data();
+            deleter_(data_);
             data_ = pointer;
         }
-    }
-
-    operator bool() const
-    {
-        return data_ != NULL;
     }
 
     T *operator->() const
@@ -83,9 +96,4 @@ public:
 private:
     T *data_;
     D deleter_;
-
-    void delete_data()
-    {
-        deleter_(data_);
-    }
 };
