@@ -26,7 +26,9 @@ if __name__ == '__main__':
     script = ""
     with open(file_name, "r") as file:
         for line in file.readlines():
-            if line[:3] == "def":
-                line = "@timer\n{0}".format(line)
+            assert isinstance(line, str)
+            if line.strip()[:4] == "def ":
+                spaces_len = len(line.split("def ")[0])
+                line = "{0}@timer\n{1}".format(" " * spaces_len, line)
             script += line
-    exec(script)
+    exec(script, globals())
