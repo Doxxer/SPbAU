@@ -3,13 +3,8 @@
 
 template <typename T, size_t N> class Array {
 public:
-    Array() : data_(new T[N])
+    Array()
     {
-    }
-
-    ~Array()
-    {
-        delete[] data_;
     }
 
     size_t size() const
@@ -30,7 +25,7 @@ public:
     }
 
 private:
-    T *data_;
+    T data_[N];
 };
 
 #endif /* end of include guard: ARRAY_HPP */
