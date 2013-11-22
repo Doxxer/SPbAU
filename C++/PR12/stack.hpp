@@ -11,6 +11,10 @@ public:
     {
     }
 
+    Stack(T const &initial_value) : top_index_(N), data_(initial_value)
+    {
+    }
+
     void push(T const &value)
     {
         assert(!full());
