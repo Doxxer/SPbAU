@@ -7,7 +7,7 @@
 
 template <typename T, size_t N, template <typename, size_t> class Container = Array> class Stack {
 public:
-    Stack(T const &initial_value = T()) : top_index_(0), data_(initial_value)
+    Stack() : top_index_(0)
     {
     }
 
