@@ -1,13 +1,13 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
+#include <algorithm>
+
 template <typename T, size_t N> class Array {
 public:
     Array(T const &initial_value = T())
     {
-        for (size_t i = 0; i < N; ++i) {
-            data_[i] = initial_value;
-        }
+        std::fill(data_, data_ + N, initial_value);
     }
 
     size_t size() const
