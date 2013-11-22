@@ -3,8 +3,11 @@
 
 template <typename T, size_t N> class Array {
 public:
-    Array()
+    Array(T const &initial_value = T())
     {
+        for (size_t i = 0; i < N; ++i) {
+            data_[i] = initial_value;
+        }
     }
 
     size_t size() const
