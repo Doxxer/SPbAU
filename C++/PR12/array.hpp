@@ -1,18 +1,15 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
-#include <vector>
-
-using std::vector;
-
 template <typename T, size_t N> class Array {
 public:
-    explicit Array(T initial_value = 0) : data_(vector<T>(N, initial_value))
+    Array() : data_(new T[N])
     {
     }
 
     ~Array()
     {
+        delete[] data_;
     }
 
     size_t size() const
@@ -20,18 +17,20 @@ public:
         return N;
     }
 
-    T operator[](size_t index) const
+    T const &operator[](size_t index) const
     {
+        assert(index < N);
         return data_[index];
     }
 
     T &operator[](size_t index)
     {
+        assert(index < N);
         return data_[index];
     }
 
 private:
-    vector<T> data_;
+    T *data_;
 };
 
 #endif /* end of include guard: ARRAY_HPP */
