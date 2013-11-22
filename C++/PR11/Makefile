@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -pedantic
+CXXFLAGS = -Wall -Wextra -std=c++03 -pedantic
 APPNAME = main
 srcdir = .
 builddir = .
