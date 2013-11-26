@@ -13,31 +13,31 @@ DROP TABLE IF EXISTS "Ship";
 DROP TABLE IF EXISTS "Customer";
 
 CREATE TABLE "Manager" (
-	"ID" INT PRIMARY KEY,
-	"Name" VARCHAR (200) NOT NULL
+    "ID" INT PRIMARY KEY,
+    "Name" VARCHAR (200) NOT NULL
 );
 
 CREATE TABLE "Plantation" (
-	"ID" INT PRIMARY KEY,
-	"Country" VARCHAR (100) NOT NULL,
-	"IDManager" INT NOT NULL,
-	FOREIGN KEY ("IDManager") REFERENCES "Manager" ("ID")
+    "ID" INT PRIMARY KEY,
+    "Country" VARCHAR (100) NOT NULL,
+    "IDManager" INT NOT NULL,
+    FOREIGN KEY ("IDManager") REFERENCES "Manager" ("ID")
 );
 
 CREATE TABLE "Ship" (
-	"ID" INT PRIMARY KEY,
-	"Name" VARCHAR (100) NOT NULL,
+    "ID" INT PRIMARY KEY,
+    "Name" VARCHAR (100) NOT NULL,
     "Payload" INT CHECK ("Payload" >= 0)
 );
 
 CREATE TABLE "AmericanPort" (
-	"ID" INT PRIMARY KEY,
-	"Name" VARCHAR (100) NOT NULL
+    "ID" INT PRIMARY KEY,
+    "Name" VARCHAR (100) NOT NULL
 );
 
 CREATE TABLE "EuropeanPort" (
-	"ID" INT PRIMARY KEY,
-	"Name" VARCHAR (100) NOT NULL
+    "ID" INT PRIMARY KEY,
+    "Name" VARCHAR (100) NOT NULL
 );
 
 CREATE TABLE "ShipmentPrice" (
@@ -51,8 +51,8 @@ CREATE TABLE "ShipmentPrice" (
 );
 
 CREATE TABLE "ShipmentToAmericanPort" (
-	"ID" INT PRIMARY KEY,
-	"Date" DATE NOT NULL,
+    "ID" INT PRIMARY KEY,
+    "Date" DATE NOT NULL,
     "Amount" INT CHECK ("Amount" >= 0),
     "IDAmericanPort" INT NOT NULL,
     "IDPlantation" INT NOT NULL,
@@ -61,8 +61,8 @@ CREATE TABLE "ShipmentToAmericanPort" (
 );
 
 CREATE TABLE "ShipmentToEuropeanPort" (
-	"ID" INT PRIMARY KEY,
-	"Date" DATE NOT NULL,
+    "ID" INT PRIMARY KEY,
+    "Date" DATE NOT NULL,
     "IDAmericanPort" INT NOT NULL,
     "IDEuropeanPort" INT NOT NULL,
     "IDShip" INT NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE "Customer" (
 );
 
 CREATE TABLE "DeliveryToCustomer" (
-	"ID" INT PRIMARY KEY,
+    "ID" INT PRIMARY KEY,
     "IDShipment" INT NOT NULL,
     "IDCustomer" INT NOT NULL,
     FOREIGN KEY ("IDShipment") REFERENCES "ShipmentToEuropeanPort" ("ID"),
