@@ -7,15 +7,11 @@ SELECT
 	ship."Name"
 FROM
 	"Ship" ship
-INNER JOIN "ShipmentPrice" price ON (ship."ID" = price."IDShip")
-INNER JOIN "EuropeanPort" eport ON (
-	eport."ID" = price."IDEuropeanPort"
-)
-INNER JOIN "AmericanPort" aport ON (
-	aport."ID" = price."IDAmericanPort"
-)
+    INNER JOIN "ShipmentPrice" price ON (ship."ID" = price."IDShip")
+    INNER JOIN "EuropeanPort" eport ON (eport."ID" = price."IDEuropeanPort")
+    INNER JOIN "AmericanPort" aport ON (aport."ID" = price."IDAmericanPort")
 WHERE
 	aport."Name" = 'Lisbon'
-AND eport."Name" = 'Rio'
-AND price."Price" < 10
-AND ship."Payload" > 1000
+    AND eport."Name" = 'Rio'
+    AND price."Price" < 10
+    AND ship."Payload" > 1000

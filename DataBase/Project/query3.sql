@@ -9,18 +9,14 @@ SELECT DISTINCT
 	cust."Name"
 FROM
 	"Plantation" plantation
-INNER JOIN "Manager" man ON (
-	plantation."IDManager" = man."ID"
-)
-INNER JOIN "ShipmentToAmericanPort" sap ON (
-	sap."IDPlantation" = plantation."ID"
-)
-INNER JOIN "ShipmentToEuropeanPort" sep ON (
-	sep."IDAmericanPort" = sap."IDAmericanPort"
-	AND sep."Date" >= '2012-05-01' /* day X */
-	AND sep."Date" < '2012-05-30'  /* day Y */
-)
-INNER JOIN "DeliveryToCustomer" dc ON (dc."IDShipment" = sep."ID")
-INNER JOIN "Customer" cust ON (cust."ID" = dc."IDCustomer")
+    INNER JOIN "Manager" man ON (plantation."IDManager" = man."ID")
+    INNER JOIN "ShipmentToAmericanPort" sap ON (sap."IDPlantation" = plantation."ID")
+    INNER JOIN "ShipmentToEuropeanPort" sep ON (
+    	sep."IDAmericanPort" = sap."IDAmericanPort"
+    	AND sep."Date" >= '2012-05-01' /* day X */
+    	AND sep."Date" < '2012-05-30'  /* day Y */
+    )
+    INNER JOIN "DeliveryToCustomer" dc ON (dc."IDShipment" = sep."ID")
+    INNER JOIN "Customer" cust ON (cust."ID" = dc."IDCustomer")
 WHERE
 	man."Name" = 'Machete'
