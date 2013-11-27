@@ -5,9 +5,9 @@ DROP TABLE IF EXISTS "ShipmentPrice";
 DROP TABLE IF EXISTS "DeliveryToCustomer";
 DROP TABLE IF EXISTS "ShipmentToAmericanPort";
 DROP TABLE IF EXISTS "ShipmentToEuropeanPort";
-DROP TABLE IF EXISTS "AmericanPort";
 DROP TABLE IF EXISTS "EuropeanPort";
 DROP TABLE IF EXISTS "Plantation";
+DROP TABLE IF EXISTS "AmericanPort";
 DROP TABLE IF EXISTS "Manager";
 DROP TABLE IF EXISTS "Ship";
 DROP TABLE IF EXISTS "Customer";
@@ -17,11 +17,18 @@ CREATE TABLE "Manager" (
     "Name" VARCHAR (200) NOT NULL
 );
 
+CREATE TABLE "AmericanPort" (
+    "ID" INT PRIMARY KEY,
+    "Name" VARCHAR (100) NOT NULL
+);
+
 CREATE TABLE "Plantation" (
     "ID" INT PRIMARY KEY,
     "Country" VARCHAR (100) NOT NULL,
     "IDManager" INT NOT NULL,
-    FOREIGN KEY ("IDManager") REFERENCES "Manager" ("ID")
+    "IDAmericanPort" INT,
+    FOREIGN KEY ("IDManager") REFERENCES "Manager" ("ID"),
+    FOREIGN KEY ("IDAmericanPort") REFERENCES "AmericanPort" ("ID")
 );
 
 CREATE TABLE "Ship" (
@@ -30,10 +37,6 @@ CREATE TABLE "Ship" (
     "Payload" INT CHECK ("Payload" >= 0)
 );
 
-CREATE TABLE "AmericanPort" (
-    "ID" INT PRIMARY KEY,
-    "Name" VARCHAR (100) NOT NULL
-);
 
 CREATE TABLE "EuropeanPort" (
     "ID" INT PRIMARY KEY,
@@ -47,16 +50,15 @@ CREATE TABLE "ShipmentPrice" (
     "Price" INT CHECK ("Price" >= 0),    
     FOREIGN KEY ("IDAmericanPort") REFERENCES "AmericanPort" ("ID"),
     FOREIGN KEY ("IDEuropeanPort") REFERENCES "EuropeanPort" ("ID"),
-    FOREIGN KEY ("IDShip") REFERENCES "Ship" ("ID")
+    FOREIGN KEY ("IDShip") REFERENCES "Ship" ("ID"),
+    UNIQUE ("IDAmericanPort", "IDEuropeanPort", "IDShip")
 );
 
 CREATE TABLE "ShipmentToAmericanPort" (
     "ID" INT PRIMARY KEY,
     "Date" DATE NOT NULL,
     "Amount" INT CHECK ("Amount" >= 0),
-    "IDAmericanPort" INT NOT NULL,
     "IDPlantation" INT NOT NULL,
-    FOREIGN KEY ("IDAmericanPort") REFERENCES "AmericanPort" ("ID"),
     FOREIGN KEY ("IDPlantation") REFERENCES "Plantation" ("ID")
 );
 
@@ -78,8 +80,7 @@ CREATE TABLE "Customer" (
 );
 
 CREATE TABLE "DeliveryToCustomer" (
-    "ID" INT PRIMARY KEY,
-    "IDShipment" INT NOT NULL,
+    "IDShipment" INT PRIMARY KEY,
     "IDCustomer" INT NOT NULL,
     FOREIGN KEY ("IDShipment") REFERENCES "ShipmentToEuropeanPort" ("ID"),
     FOREIGN KEY ("IDCustomer") REFERENCES "Customer" ("ID")

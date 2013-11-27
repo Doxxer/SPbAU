@@ -10,9 +10,8 @@ SELECT DISTINCT
 FROM
 	"Plantation" plantation
     INNER JOIN "Manager" man ON (plantation."IDManager" = man."ID")
-    INNER JOIN "ShipmentToAmericanPort" sap ON (sap."IDPlantation" = plantation."ID")
     INNER JOIN "ShipmentToEuropeanPort" sep ON (
-    	sep."IDAmericanPort" = sap."IDAmericanPort"
+    	sep."IDAmericanPort" = plantation."IDAmericanPort"
     	AND sep."Date" >= '2012-05-01' /* day X */
     	AND sep."Date" < '2012-05-30'  /* day Y */
     )
