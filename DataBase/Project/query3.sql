@@ -6,14 +6,14 @@
 был в одном из них. Выясните, с кем в Европе надо связаться, чтоб найти кошелек*/
 
 SELECT DISTINCT
-	cust."Name"
+    cust."Name"
 FROM
-	"Plantation" plantation
+    "Plantation" plantation
     INNER JOIN "Manager" man ON (plantation."IDManager" = man."ID")
     INNER JOIN "ShipmentToEuropeanPort" sep ON (sep."IDAmericanPort" = plantation."IDAmericanPort")
     INNER JOIN "DeliveryToCustomer" dc ON (dc."IDShipment" = sep."ID")
     INNER JOIN "Customer" cust ON (cust."ID" = dc."IDCustomer")
 WHERE
-	man."Name" = 'Machete'
-	AND sep."Date" >= '2012-05-01' /* day X */
-	AND sep."Date" < '2012-05-30'  /* day Y */
+    man."Name" = 'Machete'
+    AND sep."Date" >= '2012-05-25' /* day X */
+    AND sep."Date" < '2012-05-30'  /* day Y */
