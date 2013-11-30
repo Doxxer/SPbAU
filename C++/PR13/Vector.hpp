@@ -16,9 +16,7 @@ public:
           capacity_(std::max(initialSize, 4ul)),
           data_(allocate(capacity_))
     {
-        for (size_t i = 0; i < size_; ++i) {
-            new (data_ + i) T(value);
-        }
+        fill(data_, size, 0, value);
     }
 
     explicit Vector(Vector const &other)
@@ -45,7 +43,7 @@ public:
     void add(T const &value)
     {
         reserve(size_ + 1);
-        new (data_ + size_++) T(value);
+        place(data_, size_++, value);
     }
 
     void reserve(size_t newCapacity)
@@ -65,12 +63,12 @@ public:
     void resize(size_t newSize)
     {
         reserve(newSize);
-        for (size_t i = size_; i < newSize; ++i) {
-            new (data_ + i) T();
-        }
-        for (size_t i = newSize; i < size_; ++i) {
-            data_[i].~T();
-        }
+
+        if (newSize > size_)
+            fill(data_, newSize - size_, size_);
+        else
+            release(data_, size_ - newSize, newSize);
+
         size_ = newSize;
     }
 
@@ -108,16 +106,33 @@ private:
 
     void deallocate()
     {
-        for (size_t i = 0; i < size_; ++i) {
-            data_[i].~T();
-        }
+        release(data_, size_);
         ::operator delete[](data_);
+    }
+
+    void place(T *memory, size_t index, T const &value = T())
+    {
+        new (memory + index) T(value);
+    }
+
+    void release(T *memory, size_t count, size_t start_index = 0)
+    {
+        for (size_t i = 0; i < count; ++i) {
+            memory[start_index + i].~T();
+        }
     }
 
     void copy(T *source, size_t count, T *destination)
     {
         for (size_t i = 0; i < count; ++i) {
-            new (destination + i) T(source[i]);
+            place(destination, i, source[i]);
+        }
+    }
+
+    void fill(T *destination, size_t count, size_t start_index = 0, T const &value = T())
+    {
+        for (size_t i = 0; i < count; ++i) {
+            place(destination, start_index + i, value);
         }
     }
 };
