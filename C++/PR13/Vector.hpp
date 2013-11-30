@@ -16,7 +16,7 @@ public:
           capacity_(std::max(initialSize, 4ul)),
           data_(allocate(capacity_))
     {
-        fill(data_, size, 0, value);
+        fill(data_, size_, 0, value);
     }
 
     explicit Vector(Vector const &other)
@@ -101,13 +101,13 @@ private:
 
     T *allocate(size_t size)
     {
-        return (T *)::operator new[](size * sizeof(T));
+        return (T *)::operator new(size * sizeof(T));
     }
 
     void deallocate()
     {
         release(data_, size_);
-        ::operator delete[](data_);
+        ::operator delete(data_);
     }
 
     void place(T *memory, size_t index, T const &value = T())

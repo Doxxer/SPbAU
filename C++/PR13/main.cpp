@@ -40,91 +40,90 @@ struct Verbose {
 template <typename T> void print_vector(Vector<T> const &v)
 {
     for (size_t i = 0; i != v.size(); ++i)
-        std::cout << v[i] << " ";
-    std::cout << std::endl;
+        cout << v[i] << " ";
+    cout << endl;
 }
 
 template <> void print_vector(Vector<Verbose> const &v)
 {
     for (size_t i = 0; i != v.size(); ++i)
-        std::cout << *(v[i].data_) << " ";
-    std::cout << std::endl;
+        cout << *(v[i].data_) << " ";
+    cout << endl;
 }
-
 
 void test_verbose()
 {
     Vector<Verbose> v1;
-    std::cout << "Vector v1 = ";
+    cout << "Vector v1 = ";
     print_vector(v1);
 
     for (int i = 0; i < 12; ++i) {
         v1.add(Verbose(i));
-        std::cout << "v1.add(" << i << ") = ";
+        cout << "v1.add(" << i << ") = ";
         print_vector(v1);
     }
 
     // Vector<Verbose> v2 = v1; //compile error
 
     Vector<Verbose> v3(v1);
-    std::cout << "Vector v3 = ";
+    cout << "Vector v3 = ";
     print_vector(v3);
 
     v3.resize(10u);
-    std::cout << "v3.resize(10u) = ";
+    cout << "v3.resize(10u) = ";
     print_vector(v3);
 
     Vector<Verbose> v4;
-    std::cout << "v4 = ";
+    cout << "v4 = ";
     print_vector(v4);
 
     v4 = v3;
 
-    std::cout << "v4 = ";
+    cout << "v4 = ";
     print_vector(v4);
 
-    std::cout << "v3 = ";
+    cout << "v3 = ";
     print_vector(v3);
 }
 
 void test_int()
 {
     Vector<int> v1;
-    std::cout << "Vector v1 = ";
+    cout << "Vector v1 = ";
     print_vector(v1);
-    
+
     for (int i = 0; i < 12; ++i) {
         v1.add(i);
-        std::cout << "v1.add(" << i << ") = ";
+        cout << "v1.add(" << i << ") = ";
         print_vector(v1);
     }
-    
+
     // Vector<int> v2 = v1; //compile error
-    
+
     Vector<int> v3(v1);
-    std::cout << "Vector v3 = ";
+    cout << "Vector v3 = ";
     print_vector(v3);
-    
+
     v3.resize(10u);
-    std::cout << "v3.resize(10u) = ";
+    cout << "v3.resize(10u) = ";
     print_vector(v3);
-    
+
     Vector<int> v4;
-    std::cout << "v4 = ";
+    cout << "v4 = ";
     print_vector(v4);
-    
+
     v4 = v3;
-    
-    std::cout << "v4 = ";
+
+    cout << "v4 = ";
     print_vector(v4);
-    
-    std::cout << "v3 = ";
+
+    cout << "v3 = ";
     print_vector(v3);
 }
 
 int main()
 {
-    test_verbose(); // ok    
-    test_int(); // ok
+    test_verbose(); // ok
+    test_int();     // ok
     return 0;
 }
