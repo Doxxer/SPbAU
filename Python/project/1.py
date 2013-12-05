@@ -1,6 +1,5 @@
-import os
 import random
-import pyglet 
+import pyglet
 
 # load sounds    
 

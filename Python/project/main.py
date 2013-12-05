@@ -1,38 +1,44 @@
-import pyglet
-from pyglet.media import Player
+from console_input import UserInput
+from console_player import Player
 
-pyglet.options['debug_media'] = False
 
-event_loop = pyglet.app.EventLoop()
 player = Player()
+
+def action_foo():
+    it.write('--> action foo (pause)')
+    player.pause()
+
+
+def action_bar():
+    cur = (player.volume + 0.1) % 1
+    player.set_volume(cur)
+    it.write('--> action bar (volume up) to %f' % player.volume)
+
+
+def invalid_input():
+    it.write('--> Unknown command')
 
 
 def stop():
-    print 'stop'
+    it.write('# stop')
     #print player.eos_action
     #event_loop.exit()
 
 
 def eos():
-    print 'eos'
+    it.write('# eos')
     #print player.eos_action
     #event_loop.exit()
 
 
-def qqqq(dt):
-    print player.playing, player.event_types, player.volume, player.time, player.position, player.source
+if __name__ == '__main__':
+    f = 'mp3'
 
+    cmd_actions = {('foo', 'f'): action_foo, ('bar', 'b'): action_bar}
+    quit_list = ['q', 'quit', 'exit', 'shutdown']
 
-f = 'wav'
-
-player.push_handlers(on_player_eos=stop, on_eos=eos)
-
-source = pyglet.media.load("sound.%s" % f)
-pyglet.clock.schedule_interval(qqqq, 1)
-player.queue(source)
-
-player.volume = 1
-player.play()
-
-event_loop.run()
-
+    print 1
+    it = UserInput(cmd_actions, quit_list, invalid_input).start()
+    print 2
+    player.start()
+    print 3
