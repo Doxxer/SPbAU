@@ -1,5 +1,6 @@
 # coding=utf-8
 import threading
+import pyglet
 
 
 class UserInput(threading.Thread):
@@ -46,15 +47,18 @@ class UserInput(threading.Thread):
                 self._stop.set()
             else:
                 self._parse(cmd)
+        pyglet.app.exit()
 
     def start(self):
         super(UserInput, self).start()
+        pyglet.app.run()
         return self
 
     def write(self, message):
         if message:
-            with self._lock:
-                print(message)
+            print(message)
+            #with self._lock:
+            #    print(message)
 
     @property
     def lock(self):
