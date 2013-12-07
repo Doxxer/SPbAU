@@ -1,14 +1,16 @@
-import random
-import pyglet
+from select import select, poll
+import sys
 
-def f():
-     print('done playing the sound')
+timeout = 5
+print "Enter something:"
+rlist, _, _ = select([sys.stdin], [], [], timeout)
 
-sound = pyglet.media.load("sound.wav")
-
-player = sound.play()
-player.volume = random.random()
-player.push_handlers(on_eos=f)
-
-pyglet.clock.schedule_once(lambda dt: pyglet.app.exit(), delay=10)
-pyglet.app.run()
+print "000"
+print rlist
+poll()
+print "000"
+if rlist:
+    s = sys.stdin.readline()
+    print s
+else:
+    print "No inprut. Moving on..."
