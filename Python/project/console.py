@@ -5,25 +5,7 @@ import pyglet
 
 
 class Console(threading.Thread):
-    """
-    I/O helper
-    Thread. Call 'start' to run thread
-
-    Features:
-    * read from console (throw action-list dictionary: 'action_list'. See also '__init__' function)
-    * _write_force to console ('print' function)
-
-    """
-
     def __init__(self, action_list, quit_list=None, wrong_input_action=None):
-        """
-        Initialization of Console class
-
-        @type action_list: dict
-        @param wrong_input_action: optional. function, that processes wrong command input.
-        @param action_list: key: expression list of aliases. Value: function to call
-        @param quit_list: optional.
-        """
         super(Console, self).__init__()
         if not quit_list:
             quit_list = ['q', 'quit', 'exit', 'shutdown']
@@ -76,6 +58,7 @@ class Console(threading.Thread):
                 except TypeError as ex:
                     self.write("Incorrect params. Type 'help' to bla-bla-bla...")
                     self.write(ex)
+                    raise
                 break
         else:
             if command and self._wrong_input_function:

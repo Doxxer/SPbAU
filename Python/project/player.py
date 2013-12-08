@@ -10,7 +10,6 @@ class Player(object):
         self._on_sound_end = on_sound_end
         self._current_file = None
         self._audio_player = None
-        self._current_source = None
         self._is_alive = False
         self._volume = 1
         self._invalidate_player()
@@ -77,8 +76,7 @@ class Player(object):
     def play(self, song):
         self._invalidate_player()
         self._current_file = song
-        self._current_source = pyglet.media.load(song)
-        self._audio_player.queue(self._current_source)
+        self._audio_player.queue(pyglet.media.load(song))
         self._is_alive = True
         self._audio_player.play()
 
