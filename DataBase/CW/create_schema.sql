@@ -27,15 +27,15 @@ CREATE TABLE "Participant" (
 CREATE TABLE "Category" (
     "ID" INT PRIMARY KEY CHECK ("ID" >= 0 AND "ID" <= 8),
     "Name" VARCHAR (200) NOT NULL,
-    "MaxCapacity" INT NOT NULL,
+    "MaxCapacity" INT NOT NULL CHECK ("MaxCapacity" > 0), // 11111111
     "Rules" VARCHAR(2000)
 );
 
 CREATE TABLE "CommandInCategory" (
     "IDCommand" INT PRIMARY KEY,
     "IDCategory" INT NOT NULL,
-    "StartTime" INT,    
-    "FinishTime" INT,
+    "StartTime" INT CHECK ("StartTime" >= 0),   // 222222222
+    "FinishTime" INT CHECK ("FinishTime" >= 0), // 222222222
     FOREIGN KEY ("IDCommand") REFERENCES "Command" ("ID"),
     FOREIGN KEY ("IDCategory") REFERENCES "Category" ("ID"),
     UNIQUE ("IDCategory", "StartTime")
@@ -67,5 +67,6 @@ CREATE TABLE "CheckList" (
     "IDCheckPoint" INT NOT NULL,
     "CheckTime" INT,
     FOREIGN KEY ("IDCommand") REFERENCES "Command" ("ID"),
-    FOREIGN KEY ("IDCheckPoint") REFERENCES "CheckPoint" ("ID")
+    FOREIGN KEY ("IDCheckPoint") REFERENCES "CheckPoint" ("ID"),
+    UNIQUE ("IDCommand", "IDCheckPoint") // 333333333333
 );
