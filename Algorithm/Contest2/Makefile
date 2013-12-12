@@ -1,6 +1,6 @@
 TASK = task5
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -std=c++11 -pedantic
+CXXFLAGS = -Wall -Wextra -std=c++03 -pedantic
 APPNAME = main
 srcdir = .
 builddir = .
