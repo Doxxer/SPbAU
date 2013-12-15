@@ -20,12 +20,8 @@
 		8D5BC26F184235840082266E /* simpleVS.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2661842354F0082266E /* simpleVS.glsl */; };
 		8D5BC270184235840082266E /* Terrain_TCS.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2671842354F0082266E /* Terrain_TCS.glsl */; };
 		8D5BC271184235840082266E /* Terrain_TES.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2681842354F0082266E /* Terrain_TES.glsl */; };
-		8D5BC27C184256130082266E /* random_normal.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC279184256130082266E /* random_normal.png */; };
-		8D5BC27D184256130082266E /* random.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC27A184256130082266E /* random.png */; };
-		8D5BC27E184256130082266E /* West_Norway.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC27B184256130082266E /* West_Norway.png */; };
 		8D852746185DF18F00DCE83B /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852743185DF18F00DCE83B /* libGLEW.a */; };
 		8D852747185DF18F00DCE83B /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852744185DF18F00DCE83B /* libglfw3.a */; };
-		8D852748185DF18F00DCE83B /* libSOIL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852745185DF18F00DCE83B /* libSOIL.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,9 +31,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				8D5BC27C184256130082266E /* random_normal.png in CopyFiles */,
-				8D5BC27D184256130082266E /* random.png in CopyFiles */,
-				8D5BC27E184256130082266E /* West_Norway.png in CopyFiles */,
 				8D5BC26B184235840082266E /* secondPassFS.glsl in CopyFiles */,
 				8D5BC26C184235840082266E /* secondPassVS.glsl in CopyFiles */,
 				8D5BC26D184235840082266E /* simpleFS.glsl in CopyFiles */,
@@ -69,12 +62,8 @@
 		8D5BC2671842354F0082266E /* Terrain_TCS.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Terrain_TCS.glsl; sourceTree = "<group>"; };
 		8D5BC2681842354F0082266E /* Terrain_TES.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Terrain_TES.glsl; sourceTree = "<group>"; };
 		8D5BC272184236040082266E /* Terrain.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Terrain.hpp; sourceTree = "<group>"; };
-		8D5BC279184256130082266E /* random_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = random_normal.png; path = GpuTerrain/random_normal.png; sourceTree = "<group>"; };
-		8D5BC27A184256130082266E /* random.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = random.png; path = GpuTerrain/random.png; sourceTree = "<group>"; };
-		8D5BC27B184256130082266E /* West_Norway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = West_Norway.png; path = GpuTerrain/West_Norway.png; sourceTree = "<group>"; };
 		8D852743185DF18F00DCE83B /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../../../../opt/local/lib/libGLEW.a; sourceTree = "<group>"; };
 		8D852744185DF18F00DCE83B /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = ../../../../../../opt/local/lib/libglfw3.a; sourceTree = "<group>"; };
-		8D852745185DF18F00DCE83B /* libSOIL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSOIL.a; path = ../../../../../../opt/local/lib/libSOIL.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +73,6 @@
 			files = (
 				8D852746185DF18F00DCE83B /* libGLEW.a in Frameworks */,
 				8D852747185DF18F00DCE83B /* libglfw3.a in Frameworks */,
-				8D852748185DF18F00DCE83B /* libSOIL.a in Frameworks */,
 				8D5BC24C1842305A0082266E /* IOKit.framework in Frameworks */,
 				8D5BC24A184230560082266E /* Cocoa.framework in Frameworks */,
 				8D5BC2471842304D0082266E /* GLKit.framework in Frameworks */,
@@ -100,10 +88,6 @@
 			children = (
 				8D852743185DF18F00DCE83B /* libGLEW.a */,
 				8D852744185DF18F00DCE83B /* libglfw3.a */,
-				8D852745185DF18F00DCE83B /* libSOIL.a */,
-				8D5BC279184256130082266E /* random_normal.png */,
-				8D5BC27A184256130082266E /* random.png */,
-				8D5BC27B184256130082266E /* West_Norway.png */,
 				8D5BC24B1842305A0082266E /* IOKit.framework */,
 				8D5BC249184230560082266E /* Cocoa.framework */,
 				8D5BC2451842304D0082266E /* GLKit.framework */,
@@ -238,6 +222,8 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
@@ -270,6 +256,8 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
@@ -280,6 +268,10 @@
 		8D5BC24018422E930082266E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,
@@ -292,6 +284,10 @@
 		8D5BC24118422E930082266E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,

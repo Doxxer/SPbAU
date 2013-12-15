@@ -10,17 +10,10 @@ class Terrain : public Mesh {
     float maxZ;
 
 public:
-    Terrain(float f_minX = 0, float f_maxX = 0, float f_minZ = 0, float f_maxZ = 0)
+    Terrain(float f_minX = 0, float f_maxX = 0, float f_minZ = 0, float f_maxZ = 0) :
+        minX(f_minX), maxX(f_maxX), minZ(f_minZ), maxZ(f_maxZ)
     {
-        InitializeTerrain(f_minX, f_maxX, f_minZ, f_maxZ);
-    }
-
-    void InitializeTerrain(float f_minX, float f_maxX, float f_minZ, float f_maxZ)
-    {
-        minX = f_minX;
-        maxX = f_maxX;
-        minZ = f_minZ;
-        maxZ = f_maxZ;
+    
     }
 
     void GenerateTerrainData()

@@ -9,10 +9,6 @@ out vec4 out_Position;
 out vec4 out_Color;
 out vec4 out_WorldPos;
 
-uniform int u_DisplayMesh;
-uniform float u_ShowTerrainColor;
-uniform vec3 u_TerrainColor;
-
 void main(void)
 {
 	// Different colors based on height -- Start
@@ -41,16 +37,6 @@ void main(void)
 	out_Color = vec4(colorFinal, 1.0);
 	// Different colors based on height -- End
 	
-	if (u_DisplayMesh != 1)
-	{
-		out_Color = vec4(colorHeight.xyz, 1.0);
-	}
-
-	if (u_ShowTerrainColor > 0)
-	{
-		out_Color = vec4(u_TerrainColor, 1.0);
-	}
-
 	out_Position = gs_Position;
 	out_Normal = vec4(gs_normal, 0.0);
 	out_WorldPos = vec4(gs_worldCoord, 1.0);

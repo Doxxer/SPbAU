@@ -1,24 +1,12 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
 #include <boost/format.hpp>
 
 #include "shader.hpp"
 #include "Mesh.hpp"
 #include "Camera.hpp"
 #include "Terrain.hpp"
-
-#define DISPLAY_MESH 0
-#define DISPLAY_SHADED 1
-#define DISPLAY_DEPTH 2
-#define DISPLAY_FOG 3
-#define DISPLAY_LOWER_FOG 4
-#define DISPLAY_DEPTH_FOG 5
-#define DISPLAY_OCCLUSION 6
-#define DISPLAY_NORMAL 7
-
-boost::format mainWindowTitle("GPU Terrain | %4.2f FPS");
 
 using glm::vec2;
 using glm::vec3;
@@ -53,14 +41,14 @@ typedef struct {
 int width = 1300;
 int height = 900;
 
-bufferObjects bufferSecondPass;
+
 Camera cam(width, height);
 GLFWwindow *window;
+
+bufferObjects bufferSecondPass;
 double lastTime = glfwGetTime();
 GLuint framesCounter = 0;
-vec2 meshX;
-vec2 meshZ;
-vec2 meshSize;
+
 GLuint vao, vbo, ibo;
 GLuint positionLocation = 0;
 GLuint posLocSecondPass = 0;
@@ -76,19 +64,6 @@ GLuint FBO = 0;
 GLuint shaderProgram;
 GLuint shaderSecondPassProgram;
 
-const unsigned int numDeforms = 20;
-int uniformDisplay;
-int uniformDisplayFog;
-bool discoLight;
-bool deform;
-bool deformClickChanged;
-float deformPos;
-vec2 deformClickValue;
-vec4 deformPosArr[numDeforms];
-int deformArrIndex;
-vec3 terrainColor;
-bool useHeightMap;
-bool tessDistSame;
 int noiseOctaves = 4;
 float noiseLacunarity = 0.07;
 float noiseGain = 0.35;
@@ -139,12 +114,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
             cam.pos.x += move_offset;
             cam.lookPos.x += move_offset;
             break;
-        case GLFW_KEY_M:
-            uniformDisplay = (uniformDisplay == DISPLAY_MESH ? DISPLAY_SHADED : DISPLAY_MESH);
-            break;
-        case GLFW_KEY_H:
-            useHeightMap = !useHeightMap;
-            break;
 
         case GLFW_KEY_I:
             if (shift)
@@ -169,17 +138,14 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
             tessellation2.outerTessellation = vec3(6.0);
             break;
 
-        case GLFW_KEY_J:
-            tessDistSame = !tessDistSame;
-            break;
+//        case GLFW_KEY_J:
+//            tessDistSame = !tessDistSame;
+//            break;
         case GLFW_KEY_P:
             noiseGain += (shift ? 0.01 : -0.01);
             break;
         case GLFW_KEY_R:
             noiseLacunarity += (shift ? 0.01 : -0.01);
-            break;
-        case GLFW_KEY_Q:
-            discoLight = !discoLight;
             break;
         case GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GL_TRUE);
@@ -189,6 +155,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 void updateTitleFPS()
 {
+    boost::format mainWindowTitle("GPU Terrain | %4.2f FPS");
     double currentTime = glfwGetTime();
     framesCounter++;
     if (currentTime - lastTime >= 0.5) {
@@ -233,14 +200,10 @@ void checkFramebufferStatus(GLenum framebufferStatus)
 
 void init()
 {
-    meshX = vec2(-512.0, 512.0);
-    meshZ = vec2(1.0, 1025.0);
-    meshX = vec2(-800.0, 800.0);
-    meshZ = vec2(1.0, 2500.0);
-    meshSize = vec2(meshX.y - meshX.x, meshZ.y - meshZ.x);
+    vec2 meshX = vec2(-800.0, 800.0);
+    vec2 meshZ = vec2(1.0, 2500.0);
 
-    Terrain terrain;
-    terrain.InitializeTerrain(meshX.x, meshX.y, meshZ.x, meshZ.y);
+    Terrain terrain(meshX.x, meshX.y, meshZ.x, meshZ.y);
     terrain.GenerateTerrainData();
 
     // Find an unused name for the buffer and create it
@@ -367,7 +330,6 @@ void bindFBO()
     glBindTexture(GL_TEXTURE_2D, 0); // Bad mojo to unbind the framebuffer using the texture
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glClear(GL_DEPTH_BUFFER_BIT);
-    // glColorMask(false,false,false,false);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -466,51 +428,6 @@ void initNoiseTexture(GLuint *texID)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glUniform1i(glGetUniformLocation(shaderProgram, "u_Noise"), 0);
-
-    // delete[] pixels;
-}
-
-GLuint heightMapTex;
-GLuint random_normal_tex;
-GLuint random_scalar_tex;
-GLuint random_scalar_tex1;
-
-void loadHeightMap()
-{
-    heightMapTex = (unsigned int)SOIL_load_OGL_texture("West_Norway.png", 0, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, heightMapTex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    random_scalar_tex1 = (unsigned int)SOIL_load_OGL_texture("random.png", 0, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, random_scalar_tex1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void initNoiseSoil()
-{
-    random_normal_tex = (unsigned int)SOIL_load_OGL_texture("random_normal.png", 0, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, random_normal_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    random_scalar_tex = (unsigned int)SOIL_load_OGL_texture("random.png", 0, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, random_scalar_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 vec4 nearModelView;
@@ -528,23 +445,15 @@ void GetUniforms()
     nearModelView = view * vec4(0, 0, cam.near, 1);
     farModelView = view * vec4(0, 0, cam.far, 1);
 
-    vec4 camPosModelView = view * vec4(0, 0, 0, 1.0);
-
     // The tessellation distance - Terrain that is closer to camera than this value is tessellated
     float tessDist = -((1.0 * cam.far - cam.near) / 3.0 + cam.near);
     float tessDist2 = -(2.0 * (cam.far - cam.near) / 3.0 + cam.near);
-    if (tessDistSame)
-        tessDist = tessDist2;
 
     float rangeX = abs(cam.right - cam.left) / 2.0;
     float extraX = abs(tessDist2) * tan(cam.fovx * M_PI / 180.0 / 2.0);
 
     float rangeY = abs(cam.top - cam.bottom) / 2.0;
     float extraY = abs(cam.far) * tan(cam.fovy * M_PI / 180.0 / 2.0);
-
-    glUniform1f(glGetUniformLocation(shaderProgram, "u_LeftMeshMin"), meshX.x);
-    glUniform1f(glGetUniformLocation(shaderProgram, "u_NearMeshMin"), meshZ.x);
-    glUniform2f(glGetUniformLocation(shaderProgram, "u_MeshSize"), meshSize.x, meshSize.y);
 
     glUniform1f(glGetUniformLocation(shaderProgram, "u_Near"), -cam.near);
     glUniform1f(glGetUniformLocation(shaderProgram, "u_Far"), -cam.far);
@@ -553,7 +462,7 @@ void GetUniforms()
     glUniform1f(glGetUniformLocation(shaderProgram, "u_Bottom"), -rangeY - extraY);
     glUniform1f(glGetUniformLocation(shaderProgram, "u_Top"), rangeY + extraY);
 
-    glUniform1i(glGetUniformLocation(shaderProgram, "u_Display"), uniformDisplay);
+    glUniform1i(glGetUniformLocation(shaderProgram, "u_Display"), 0);
 
     glUniform1f(glGetUniformLocation(shaderProgram, "u_TessDistance"), tessDist);
     glUniform1f(glGetUniformLocation(shaderProgram, "u_TessDistance2"), tessDist2);
@@ -576,58 +485,6 @@ void GetUniforms()
     glUniform1i(glGetUniformLocation(shaderProgram, "u_NoiseOctaves"), noiseOctaves);
     glUniform1f(glGetUniformLocation(shaderProgram, "u_NoiseLacunarity"), noiseLacunarity);
     glUniform1f(glGetUniformLocation(shaderProgram, "u_NoiseGain"), noiseGain);
-
-    glUniform1f(glGetUniformLocation(shaderProgram, "u_UseHeightMap"), useHeightMap ? 1.0 : -1.0);
-
-    glUniform1f(glGetUniformLocation(shaderProgram, "u_ShowTerrainColor"), discoLight ? 1.0 : -1.0);
-    glUniform3f(glGetUniformLocation(shaderProgram, "u_TerrainColor"),
-                terrainColor.x,
-                terrainColor.y,
-                terrainColor.z);
-
-    float deformVal = -1;
-
-    // If there's an entry for size of blast then we need to run deformation in the TES shader
-    if (deformPosArr[0].w > 0) {
-        deformVal = 1;
-    }
-
-    // Store into the deform array if the mode is enabled and the user clicks on the output screen
-    // Claculate z distance and radius to pass into the Tessellation Evaluation Shader
-    vec4 deformPos;
-    if (deform && deformClickChanged) {
-        deformPos.w = 0;
-        deformVal = 1;
-
-        // Transform the clicked position to world
-        deformPos.x = cam.left + deformClickValue.x * (2.0 * rangeX);
-        deformPos.y = deformPos.x; //.y + deformClickValue.y * (2.0*rangeY);
-        deformPos.z = cam.near;
-
-        vec4 deformPosNorm = normalize(deformPos);
-
-        deformPos.x = -camPosModelView.x + deformPosNorm.x * 45.0;
-        deformPos.z = -camPosModelView.z + deformPosNorm.z * -45.0;
-        // deformPos = view*vec4(deformPos.x, deformPos.y, deformPos.z, 1.0);
-        // Random Radius
-        deformPos.w = ((perm[((int)abs(deformPos.z * 200)) % 256] +
-                        perm[((int)abs(deformPos.x) * 200) % 256]) /
-                       256.0) *
-                          4.0 +
-                      3.0;
-
-        deformPosArr[deformArrIndex] = deformPos;
-        ++deformArrIndex;
-        deformArrIndex = deformArrIndex % numDeforms;
-        deformClickChanged = false;
-        // std::cout << "Deform: " << deformPos.x << ", " << deformPos.y << ", " << deformPos.z <<
-        // ", " << deformPos.w << std::endl << std::endl;
-    }
-
-    glUniform1f(glGetUniformLocation(shaderProgram, "u_Deform"), deformVal);
-    glUniform4fv(glGetUniformLocation(shaderProgram, "u_DeformPosArr"),
-                 numDeforms * 4,
-                 &(deformPosArr[0][0]));
 }
 
 void GetUniformsSecondPass()
@@ -643,8 +500,8 @@ void GetUniformsSecondPass()
     glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_ScreenWidth"), width);
     glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_ScreenHeight"), height);
 
-    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_Display"), uniformDisplay);
-    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_DisplayFog"), uniformDisplayFog);
+    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_Display"), 0);
+    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_DisplayFog"), 0);
 
     glUniformMatrix4fv(
         glGetUniformLocation(shaderSecondPassProgram, "u_View"), 1, GL_FALSE, &view[0][0]);
@@ -685,12 +542,14 @@ void displaySecondPass()
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, worldPosTexture);
     glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_WorldPostex"), 4);
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, random_normal_tex);
-    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomNormaltex"), 5);
-    glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_2D, random_scalar_tex);
-    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomScalartex"), 6);
+    
+//    glActiveTexture(GL_TEXTURE5);
+//    glBindTexture(GL_TEXTURE_2D, random_normal_tex);
+//    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomNormaltex"), 5);
+//    
+//    glActiveTexture(GL_TEXTURE6);
+//    glBindTexture(GL_TEXTURE_2D, random_scalar_tex);
+//    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomScalartex"), 6);
 
     glDrawElements(GL_TRIANGLES, bufferSecondPass.numIndices, GL_UNSIGNED_SHORT, 0);
 
@@ -710,25 +569,20 @@ void display()
 
     GetUniforms();
 
-    if (uniformDisplay == DISPLAY_MESH) {
-        glClearColor(0, 0, 0, 1);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else {
-        glClearColor(0.1, 0.4, 0.7, 1.0);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
+    glClearColor(0, 0, 0, 1);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glBindVertexArray(vao);
     glEnable(GL_TEXTURE_2D);
 
-    glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_2D, heightMapTex);
-    glUniform1i(glGetUniformLocation(shaderProgram, "u_HeightMap"), 7);
+//    glActiveTexture(GL_TEXTURE7);
+//    glBindTexture(GL_TEXTURE_2D, heightMapTex);
+//    glUniform1i(glGetUniformLocation(shaderProgram, "u_HeightMap"), 7);
 
     // This random texture is used to displace water
-    glActiveTexture(GL_TEXTURE8);
-    glBindTexture(GL_TEXTURE_2D, random_scalar_tex1);
-    glUniform1i(glGetUniformLocation(shaderProgram, "u_RandomScalartex1"), 8);
+//    glActiveTexture(GL_TEXTURE8);
+//    glBindTexture(GL_TEXTURE_2D, random_scalar_tex1);
+//    glUniform1i(glGetUniformLocation(shaderProgram, "u_RandomScalartex1"), 8);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glDrawElements(GL_PATCHES, triVerticesToDraw, GL_UNSIGNED_INT, 0);
@@ -762,7 +616,6 @@ int main(void)
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -772,7 +625,6 @@ int main(void)
         exit(EXIT_FAILURE);
     }
     glfwMakeContextCurrent(window);
-    //    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     glfwSetKeyCallback(window, key_callback);
 
     glewExperimental = true;
@@ -785,23 +637,10 @@ int main(void)
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl
               << "Glew version: " << glewGetString(GLEW_VERSION) << std::endl;
 
-    tessDistSame = false;
-    useHeightMap = false;
-    terrainColor = vec3(0.5, 0.8, 0.1);
     tessellation.innerTessellation = 1.0f;
     tessellation.outerTessellation = vec3(1);
-    discoLight = false;
-    deform = false;
-    deformClickChanged = false;
-    uniformDisplay = DISPLAY_MESH;
-    uniformDisplayFog = DISPLAY_FOG;
-
-    for (int i = 0; i < numDeforms; ++i) {
-        deformPosArr[i] = vec4(-1);
-    }
 
     // Create, compile and attach shaders
-
     shaderProgram = LoadShaders("simpleVS.glsl",
                                 "simpleFS.glsl",
                                 "simpleGS.glsl",
@@ -815,8 +654,6 @@ int main(void)
 
     initFBO(width, height);
     init();
-    initNoiseSoil();
-    loadHeightMap();
     initSecondPass();
 
     std::cout << "GPU Terrain Generator" << std::endl;
@@ -828,5 +665,6 @@ int main(void)
     }
     glfwDestroyWindow(window);
     glfwTerminate();
+    freeFBO();
     exit(EXIT_SUCCESS);
 }

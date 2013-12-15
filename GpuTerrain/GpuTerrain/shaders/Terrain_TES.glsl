@@ -24,7 +24,6 @@ out vec4 tes_Position;
 #define ONEHALF 0.001953125
 
 float fade(float t) {
-        //return t*t*(3.0-2.0*t); // Old fade
     return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade
 }
 
@@ -85,63 +84,6 @@ float turbulence(int octaves, vec3 P, float lacunarity, float gain)
         totalgain *= gain;
     }
     return abs(sum);
-}
-
-
-
-    // Rigid MultiFractal Terrain Model - from the book "Texturing & Modeling: A Procedural Approach"
-float RidgedMultiFractal(vec3 point, float H, float lacunarity, float octaves, float offset, float gain)
-{
-	float result, frequency, signal, weight;
-	int i;
-	bool first = true;
-	float exponentArray[5];
-    
-	frequency = 1.0;
-	if (first)
-        {
-		for (int i = 0; i<5; ++i)
-            {
-			exponentArray[i] = pow(frequency, -H);
-			frequency *= lacunarity;
-            }
-        
-		first = false;
-        }
-    
-	/* get first octave */
-	signal = noise( point );
-	/* get absolute value of signal (this creates the ridges) */
-	if ( signal < 0.0 ) signal = -signal;
-	/* invert and translate (note that "offset" should be ~= 1.0) */
-	signal = offset - signal;
-	/* square the signal, to increase "sharpness" of ridges */
-	signal *= signal;
-	/* assign initial values */
-	result = signal;
-	weight = 1.0;
-    
-	for( i=1; i<octaves; i++ )
-        {
-		/* increase the frequency */
-		point.x *= lacunarity;
-		point.y *= lacunarity;
-		point.z *= lacunarity;
-        
-		/* weight successive contributions by previous signal */
-		weight = signal * gain;
-		if ( weight > 1.0 ) weight = 1.0;
-		if ( weight < 0.0 ) weight = 0.0;
-		signal = noise( point );
-		if ( signal < 0.0 ) signal = -signal;
-		signal = offset - signal;
-		signal *= signal;
-		/* weight the contribution */
-		signal *= weight;
-		result += signal * exponentArray[i];
-        }
-    
-	return result;
 }
 
 void main(void)

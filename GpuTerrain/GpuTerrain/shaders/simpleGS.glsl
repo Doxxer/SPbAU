@@ -12,12 +12,12 @@ out vec4 gs_Position;
 
 void main(void)
 {
-        // Calculate the normal for the triangle
+    // Calculate the normal for the triangle
 	vec3 diff1 = tes_worldCoord[2] - tes_worldCoord[0];
 	vec3 diff2 = tes_worldCoord[1] - tes_worldCoord[0];
 	vec3 normal = normalize(cross(diff1, diff2));
 	
-        //Pass through the original vertex and assign normals
+    //Pass through the original vertex and assign normals
     for(int i=0; i<3; i++) {
         gl_Position = gl_in[i].gl_Position;
         gs_worldCoord = tes_worldCoord[i];
