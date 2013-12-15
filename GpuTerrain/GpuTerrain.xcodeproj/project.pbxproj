@@ -13,8 +13,6 @@
 		8D5BC2481842304D0082266E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D5BC2461842304D0082266E /* OpenGL.framework */; };
 		8D5BC24A184230560082266E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D5BC249184230560082266E /* Cocoa.framework */; };
 		8D5BC24C1842305A0082266E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D5BC24B1842305A0082266E /* IOKit.framework */; };
-		8D5BC24F184230710082266E /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D5BC24D184230710082266E /* libGLEW.a */; };
-		8D5BC250184230710082266E /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D5BC24E184230710082266E /* libglfw3.a */; };
 		8D5BC26B184235840082266E /* secondPassFS.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2621842354F0082266E /* secondPassFS.glsl */; };
 		8D5BC26C184235840082266E /* secondPassVS.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2631842354F0082266E /* secondPassVS.glsl */; };
 		8D5BC26D184235840082266E /* simpleFS.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC2641842354F0082266E /* simpleFS.glsl */; };
@@ -25,7 +23,9 @@
 		8D5BC27C184256130082266E /* random_normal.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC279184256130082266E /* random_normal.png */; };
 		8D5BC27D184256130082266E /* random.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC27A184256130082266E /* random.png */; };
 		8D5BC27E184256130082266E /* West_Norway.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D5BC27B184256130082266E /* West_Norway.png */; };
-		8DC498CE184B515E00342267 /* libSOIL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC498CD184B515E00342267 /* libSOIL.a */; };
+		8D852746185DF18F00DCE83B /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852743185DF18F00DCE83B /* libGLEW.a */; };
+		8D852747185DF18F00DCE83B /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852744185DF18F00DCE83B /* libglfw3.a */; };
+		8D852748185DF18F00DCE83B /* libSOIL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D852745185DF18F00DCE83B /* libSOIL.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,8 +59,6 @@
 		8D5BC2461842304D0082266E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		8D5BC249184230560082266E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8D5BC24B1842305A0082266E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		8D5BC24D184230710082266E /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../../../opt/local/lib/libGLEW.a; sourceTree = "<group>"; };
-		8D5BC24E184230710082266E /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = ../../../../../opt/local/lib/libglfw3.a; sourceTree = "<group>"; };
 		8D5BC25E184232DB0082266E /* Mesh.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
 		8D5BC25F184233850082266E /* Camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
 		8D5BC2621842354F0082266E /* secondPassFS.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = secondPassFS.glsl; sourceTree = "<group>"; };
@@ -74,7 +72,9 @@
 		8D5BC279184256130082266E /* random_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = random_normal.png; path = GpuTerrain/random_normal.png; sourceTree = "<group>"; };
 		8D5BC27A184256130082266E /* random.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = random.png; path = GpuTerrain/random.png; sourceTree = "<group>"; };
 		8D5BC27B184256130082266E /* West_Norway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = West_Norway.png; path = GpuTerrain/West_Norway.png; sourceTree = "<group>"; };
-		8DC498CD184B515E00342267 /* libSOIL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSOIL.a; path = ../../../../../opt/local/lib/libSOIL.a; sourceTree = "<group>"; };
+		8D852743185DF18F00DCE83B /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../../../../opt/local/lib/libGLEW.a; sourceTree = "<group>"; };
+		8D852744185DF18F00DCE83B /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = ../../../../../../opt/local/lib/libglfw3.a; sourceTree = "<group>"; };
+		8D852745185DF18F00DCE83B /* libSOIL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSOIL.a; path = ../../../../../../opt/local/lib/libSOIL.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,9 +82,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DC498CE184B515E00342267 /* libSOIL.a in Frameworks */,
-				8D5BC24F184230710082266E /* libGLEW.a in Frameworks */,
-				8D5BC250184230710082266E /* libglfw3.a in Frameworks */,
+				8D852746185DF18F00DCE83B /* libGLEW.a in Frameworks */,
+				8D852747185DF18F00DCE83B /* libglfw3.a in Frameworks */,
+				8D852748185DF18F00DCE83B /* libSOIL.a in Frameworks */,
 				8D5BC24C1842305A0082266E /* IOKit.framework in Frameworks */,
 				8D5BC24A184230560082266E /* Cocoa.framework in Frameworks */,
 				8D5BC2471842304D0082266E /* GLKit.framework in Frameworks */,
@@ -98,12 +98,12 @@
 		8D5BC22D18422E930082266E = {
 			isa = PBXGroup;
 			children = (
-				8DC498CD184B515E00342267 /* libSOIL.a */,
+				8D852743185DF18F00DCE83B /* libGLEW.a */,
+				8D852744185DF18F00DCE83B /* libglfw3.a */,
+				8D852745185DF18F00DCE83B /* libSOIL.a */,
 				8D5BC279184256130082266E /* random_normal.png */,
 				8D5BC27A184256130082266E /* random.png */,
 				8D5BC27B184256130082266E /* West_Norway.png */,
-				8D5BC24D184230710082266E /* libGLEW.a */,
-				8D5BC24E184230710082266E /* libglfw3.a */,
 				8D5BC24B1842305A0082266E /* IOKit.framework */,
 				8D5BC249184230560082266E /* Cocoa.framework */,
 				8D5BC2451842304D0082266E /* GLKit.framework */,
