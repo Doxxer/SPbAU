@@ -1,6 +1,6 @@
 CXX = clang++
 CXXFLAGS = -std=c++03 -Wall -Wextra -pedantic
-APPNAME = interpp
+APPNAME = inter.out
 srcdir = src
 builddir = ./bin
 in = 1.txt

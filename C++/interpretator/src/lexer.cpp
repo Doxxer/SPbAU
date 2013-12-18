@@ -93,6 +93,7 @@ bool Lexer::processLine(std::string &str, int lineNumber)
             continue;
         }
 
+        // number
         if (isdigit(*it)) {
             std::string number;
             while (it != str.end()) {
@@ -101,6 +102,14 @@ bool Lexer::processLine(std::string &str, int lineNumber)
                     break;
                 }
                 ++it;
+            }
+
+            if ((it + 1) != str.end()) {
+                if (*(it + 1) != ' ') {
+                    std::cerr << "Lexer error: error while parsing number at line " << lineNumber
+                              << std::endl;
+                    return state_ = false;
+                }
             }
             currentToken.type = Token::tt_number;
             currentToken.name = number;
