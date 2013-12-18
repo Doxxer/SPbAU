@@ -30,22 +30,19 @@ enum {
 };
 }
 
-typedef struct {
+struct bufferObjects {
     unsigned int vao;
     unsigned int ibo;
     unsigned int numIndices;
-    // Don't need these to get it working, but needed for deallocation
     unsigned int vbo;
-} bufferObjects;
+} bufferSecondPass;
 
 int width = 1300;
 int height = 900;
 
-
 Camera cam(width, height);
 GLFWwindow *window;
 
-bufferObjects bufferSecondPass;
 double lastTime = glfwGetTime();
 GLuint framesCounter = 0;
 
@@ -71,10 +68,7 @@ float noiseGain = 0.35;
 struct Tess {
     float innerTessellation;
     vec3 outerTessellation;
-};
-
-Tess tessellation;
-Tess tessellation2;
+} tessellation, tessellation2;
 
 static void error_callback(int error, const char *description)
 {
@@ -138,9 +132,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
             tessellation2.outerTessellation = vec3(6.0);
             break;
 
-//        case GLFW_KEY_J:
-//            tessDistSame = !tessDistSame;
-//            break;
         case GLFW_KEY_P:
             noiseGain += (shift ? 0.01 : -0.01);
             break;
@@ -163,38 +154,6 @@ void updateTitleFPS()
         glfwSetWindowTitle(window, mainWindowTitle.str().c_str());
         framesCounter = 0;
         lastTime = currentTime;
-    }
-}
-
-void checkFramebufferStatus(GLenum framebufferStatus)
-{
-    switch (framebufferStatus) {
-        case GL_FRAMEBUFFER_COMPLETE_EXT:
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-            printf("Attachment Point Unconnected");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-            printf("Missing Attachment");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-            printf("Dimensions do not match");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-            printf("Formats");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-            printf("Draw Buffer");
-            break;
-        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-            printf("Read Buffer");
-            break;
-        case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-            printf("Unsupported Framebuffer Configuration");
-            break;
-        default:
-            printf("Unkown Framebuffer Object Failure");
-            break;
     }
 }
 
@@ -233,6 +192,23 @@ void init()
     glBindVertexArray(0);
 }
 
+void bindTexture(int w, int h, GLuint &texture, bool depth = false)
+{
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    if (depth) {
+        glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    }
+    else {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGBA, GL_FLOAT, 0);
+    }
+}
+
 void initFBO(int w, int h)
 {
     GLenum FBOstatus;
@@ -245,42 +221,11 @@ void initFBO(int w, int h)
     glGenTextures(1, &colorTexture);
     glGenTextures(1, &worldPosTexture);
 
-    glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-
-    glBindTexture(GL_TEXTURE_2D, normalTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGBA, GL_FLOAT, 0);
-
-    glBindTexture(GL_TEXTURE_2D, positionTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGBA, GL_FLOAT, 0);
-
-    glBindTexture(GL_TEXTURE_2D, colorTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGBA, GL_FLOAT, 0);
-
-    glBindTexture(GL_TEXTURE_2D, worldPosTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, w, h, 0, GL_RGBA, GL_FLOAT, 0);
+    bindTexture(w, h, depthTexture, true);
+    bindTexture(w, h, normalTexture);
+    bindTexture(w, h, positionTexture);
+    bindTexture(w, h, colorTexture);
+    bindTexture(w, h, worldPosTexture);
 
     // create a framebuffer object
     glGenFramebuffers(1, &FBO);
@@ -315,7 +260,6 @@ void initFBO(int w, int h)
     FBOstatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (FBOstatus != GL_FRAMEBUFFER_COMPLETE) {
         printf("GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO\n");
-        checkFramebufferStatus(FBOstatus);
     }
 
     // switch back to window-system-provided framebuffer
@@ -509,14 +453,6 @@ void GetUniformsSecondPass()
         glGetUniformLocation(shaderSecondPassProgram, "u_Persp"), 1, GL_FALSE, &perspective[0][0]);
 }
 
-void setTextures()
-{
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST);
-}
-
 void displaySecondPass()
 {
     glUseProgram(shaderSecondPassProgram);
@@ -543,14 +479,6 @@ void displaySecondPass()
     glBindTexture(GL_TEXTURE_2D, worldPosTexture);
     glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_WorldPostex"), 4);
     
-//    glActiveTexture(GL_TEXTURE5);
-//    glBindTexture(GL_TEXTURE_2D, random_normal_tex);
-//    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomNormaltex"), 5);
-//    
-//    glActiveTexture(GL_TEXTURE6);
-//    glBindTexture(GL_TEXTURE_2D, random_scalar_tex);
-//    glUniform1i(glGetUniformLocation(shaderSecondPassProgram, "u_RandomScalartex"), 6);
-
     glDrawElements(GL_TRIANGLES, bufferSecondPass.numIndices, GL_UNSIGNED_SHORT, 0);
 
     glBindVertexArray(0);
@@ -575,20 +503,14 @@ void display()
     glBindVertexArray(vao);
     glEnable(GL_TEXTURE_2D);
 
-//    glActiveTexture(GL_TEXTURE7);
-//    glBindTexture(GL_TEXTURE_2D, heightMapTex);
-//    glUniform1i(glGetUniformLocation(shaderProgram, "u_HeightMap"), 7);
-
-    // This random texture is used to displace water
-//    glActiveTexture(GL_TEXTURE8);
-//    glBindTexture(GL_TEXTURE_2D, random_scalar_tex1);
-//    glUniform1i(glGetUniformLocation(shaderProgram, "u_RandomScalartex1"), 8);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glDrawElements(GL_PATCHES, triVerticesToDraw, GL_UNSIGNED_INT, 0);
 
     // Set the textures from the first pass to display it in the second pass
-    setTextures();
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST);
     //
     // Always want to show solid mesh here as the vbos in this pass are in screen space
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
