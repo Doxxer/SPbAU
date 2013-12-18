@@ -84,6 +84,12 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
     double move_offset = (shift ? 2.0 : 0.2);
     
     switch (key) {
+        case GLFW_KEY_Q:
+            cam.rot.x -= 1.0;
+            break;
+        case GLFW_KEY_E:
+            cam.rot.x += 1.0;
+            break;
         case GLFW_KEY_Z:
             cam.pos.z -= move_offset;
             cam.lookPos.z -= move_offset;
