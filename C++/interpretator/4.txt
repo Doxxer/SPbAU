@@ -1,0 +1,10 @@
+# undef_var.pp
+# тест определения переменных
+if 1 > 0:
+    greater = 1
+end
+if 1 < 0:
+    less = 1
+end
+print greater # ok, greater определена, так как тело if 1 > 0 было исполнено
+print less # ошибка, переменная less не опредлена

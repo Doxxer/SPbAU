@@ -1,0 +1,8 @@
+# rec_error.pp
+# пример взимной рекурсии с ошибкой
+def foo(n):
+    if n > 0:
+        return bar(n - 1)
+    end
+end
+print foo(10)  # выдаст ошибку, т.к. функцияя bar(n) не определена

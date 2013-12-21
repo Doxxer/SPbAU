@@ -1,0 +1,13 @@
+# global_var.pp
+# тест глобальных/локальных переменных
+global = 1
+
+def assign():
+    global = 2
+    local = 1
+end
+
+assign()
+
+print global  # напечатает 1, global внутри assign за пределами функции не видна
+print local   # ошибка, local за пределами функции не видна

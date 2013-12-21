@@ -10,9 +10,14 @@ class Lexer {
 public:
     Lexer(std::string const &sourceFileName);
 
-    bool IsOk() const
+    Token const *peek()
     {
-        return state_;
+        return position_ != content_.end() ? &*position_ : 0;
+    }
+
+    Token const *peek_next()
+    {
+        return position_ + 1 != content_.end() ? &*(position_ + 1) : 0;
     }
 
     Token const *get()
@@ -21,15 +26,17 @@ public:
     }
 
 private:
-private:
-    Lexer(Lexer const &);
     Lexer &operator=(Lexer const &);
+    Lexer(Lexer const &other);
 
-    bool processLine(std::string &, int);
+    void processLine(std::string const &, size_t);
+
+    void getOperator(std::string::const_iterator &, Token &);
+    void getIdentifier(std::string::const_iterator &, Token &);
+    void getNumber(std::string::const_iterator &, Token &);
 
     std::vector<Token> content_;
     std::vector<Token>::iterator position_;
-    bool state_;
 };
 
 #endif /* end of include guard: LEXER_HPP */

@@ -1,0 +1,10 @@
+# one_more_fib.pp
+# вычисление n-того числа Фибоначчи на PP
+def fib(n):
+    if n <= 1:
+        return 1
+    end
+    return n * fib(n-1) # ok, рекурсивные функции допустимы
+end
+
+print fib(3)

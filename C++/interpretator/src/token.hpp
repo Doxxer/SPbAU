@@ -1,6 +1,7 @@
 #ifndef TOKEN_HPP
 #define TOKEN_HPP
 
+#include <cstddef>
 #include <string>
 #include <iostream>
 
@@ -11,8 +12,13 @@ struct Token {
         tt_comma,           // ,
         tt_colon,           // :
         tt_identifier,      // variable or function name
-        tt_operation,       // + - * / =
-        tt_number,          // 312
+        tt_operation_plus,  //
+        tt_operation_minus, //
+        tt_operation_mult,  //
+        tt_operation_div,   //
+        tt_operation_eq,    //
+        tt_inequality,      // > < >= <= == !=
+        tt_number,          //
         tt_def,             // keyword def
         tt_end,             // keyword end
         tt_while,           // keyword while
@@ -20,74 +26,35 @@ struct Token {
         tt_return,          // keyword return
         tt_print,           // keyword print
         tt_read,            // keyword read
+        tt_cr,              // \n
+        tt_eof,             // eof
         tt_unknown          //
     };
+
+    Token(Type type_ = Token::tt_unknown, std::string const &name_ = "", size_t lineNumber_ = 0)
+        : type(type_), name(name_), lineNumber(lineNumber_)
+    {
+    }
 
     Token(Token const &other) : type(other.type), name(other.name), lineNumber(other.lineNumber)
     {
     }
 
-    Token(Type type_, std::string const &name_, int lineNumber_)
-        : type(type_), name(name_), lineNumber(lineNumber_)
+    void swap(Token &other)
     {
+        std::swap(other.type, type);
+        std::swap(other.name, name);
+        std::swap(other.lineNumber, lineNumber);
     }
-
-    void debug() const
+    Token &operator=(Token const &other)
     {
-        std::string t;
-        switch (type) {
-            case tt_opening_bracket:
-                t = "tt_opening_bracket";
-                break;
-            case tt_closing_bracket:
-                t = "tt_closing_bracket";
-                break;
-            case tt_comma:
-                t = "tt_comma";
-                break;
-            case tt_colon:
-                t = "tt_colon";
-                break;
-            case tt_identifier:
-                t = "tt_identifier";
-                break;
-            case tt_operation:
-                t = "tt_operation";
-                break;
-            case tt_number:
-                t = "tt_number";
-                break;
-            case tt_def:
-                t = "tt_def";
-                break;
-            case tt_end:
-                t = "tt_end";
-                break;
-            case tt_while:
-                t = "tt_while";
-                break;
-            case tt_if:
-                t = "tt_if";
-                break;
-            case tt_return:
-                t = "tt_return";
-                break;
-            case tt_print:
-                t = "tt_print";
-                break;
-            case tt_read:
-                t = "tt_read";
-                break;
-            default:
-                break;
-        }
-        std::cout << "Type: " << t << " Name: <" << name << "> At line #" << lineNumber
-                  << std::endl;
+        if (this != &other)
+            Token(other).swap(*this);
+        return *this;
     }
 
     Type type;
     std::string name;
-    int lineNumber;
+    size_t lineNumber;
 };
-
 #endif /* end of include guard: TOKEN_HPP */

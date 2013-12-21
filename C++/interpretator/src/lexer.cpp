@@ -1,127 +1,154 @@
-#include "lexer.hpp"
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
-Lexer::Lexer(std::string const &sourceFileName) : state_(true)
+#include "lexer.hpp"
+#include "errors.hpp"
+
+Lexer::Lexer(std::string const &sourceFileName)
 {
     std::ifstream inputFile_(sourceFileName, std::ifstream::in);
     std::string line;
 
-    for (int lineNumber = 1; !inputFile_.eof(); ++lineNumber) {
+    size_t lineNumber = 1;
+    for (; !inputFile_.eof(); ++lineNumber) {
         std::getline(inputFile_, line);
+        if (line.length() == 0)
+            continue;
 
-        if (line.length() > 0 && !processLine(line, lineNumber)) {
-            break;
-        }
+        processLine(line, lineNumber);
     }
+    content_.push_back(Token(Token::tt_eof, "", lineNumber));
     position_ = content_.begin();
     inputFile_.close();
 }
 
-bool Lexer::processLine(std::string &str, int lineNumber)
+void Lexer::getOperator(std::string::const_iterator &it, Token &currentToken)
 {
-    std::cout << ">>> parsing line number " << lineNumber << ": " << str << std::endl;
-
-    for (std::string::iterator it = str.begin(); it != str.end(); ++it) {
-        Token currentToken(Token::tt_unknown, "", lineNumber);
-
-        switch (*it) {
-            case ' ':
-                continue;
-            case ':':
-                currentToken.type = Token::tt_colon;
-                content_.push_back(currentToken);
-                break;
-            case ',':
-                currentToken.type = Token::tt_comma;
-                content_.push_back(currentToken);
-                break;
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case '=':
-                currentToken.type = Token::tt_operation;
-                currentToken.name = *it;
-                content_.push_back(currentToken);
-                break;
-            case '(':
-                currentToken.type = Token::tt_opening_bracket;
-                content_.push_back(currentToken);
-                break;
-            case ')':
-                currentToken.type = Token::tt_closing_bracket;
-                content_.push_back(currentToken);
-                break;
-            case '#':
-                return true;
-        }
-
-        if (isalpha(*it)) {
-            std::string identifier;
-
-            while (it != str.end()) {
-                identifier += *it;
-                if ((it + 1) == str.end() ||
-                    !(isalpha(*(it + 1)) || isdigit(*(it + 1)) || *(it + 1) == '_')) {
-                    break;
-                }
+    switch (*it) {
+        case ':':
+            currentToken.type = Token::tt_colon;
+            break;
+        case ',':
+            currentToken.type = Token::tt_comma;
+            break;
+        case '+':
+            currentToken.type = Token::tt_operation_plus;
+            break;
+        case '-':
+            currentToken.type = Token::tt_operation_minus;
+            break;
+        case '*':
+            currentToken.type = Token::tt_operation_mult;
+            break;
+        case '/':
+            currentToken.type = Token::tt_operation_div;
+            break;
+        case '(':
+            currentToken.type = Token::tt_opening_bracket;
+            break;
+        case ')':
+            currentToken.type = Token::tt_closing_bracket;
+            break;
+        case '<':
+        case '>':
+            currentToken.name = *it;
+            currentToken.type = Token::tt_inequality;
+            if (*(it + 1) == '=') {
+                currentToken.name += '=';
                 ++it;
             }
-
-            if (identifier == "def")
-                currentToken.type = Token::tt_def;
-            else if (identifier == "end")
-                currentToken.type = Token::tt_end;
-            else if (identifier == "while")
-                currentToken.type = Token::tt_while;
-            else if (identifier == "if")
-                currentToken.type = Token::tt_if;
-            else if (identifier == "return")
-                currentToken.type = Token::tt_return;
-            else if (identifier == "print")
-                currentToken.type = Token::tt_print;
-            else if (identifier == "read")
-                currentToken.type = Token::tt_read;
-            else {
-                currentToken.type = Token::tt_identifier;
-                currentToken.name = identifier;
-            }
-
-            content_.push_back(currentToken);
-            continue;
-        }
-
-        // number
-        if (isdigit(*it)) {
-            std::string number;
-            while (it != str.end()) {
-                number += *it;
-                if ((it + 1) == str.end() || !isdigit(*(it + 1))) {
-                    break;
-                }
+            break;
+        case '=':
+            currentToken.name = *it;
+            if (*(it + 1) == '=') {
+                currentToken.name += '=';
+                currentToken.type = Token::tt_inequality;
                 ++it;
-            }
+            } else
+                currentToken.type = Token::tt_operation_eq;
+            break;
+        case '!':
+            currentToken.name = *it;
+            if (*(it + 1) == '=') {
+                currentToken.name += '=';
+                currentToken.type = Token::tt_inequality;
+                ++it;
+            } else
+                throw LexerError("expected '=' after '!'", currentToken.lineNumber);
+            break;
+    }
+}
 
-            if ((it + 1) != str.end()) {
-                if (*(it + 1) != ' ') {
-                    std::cerr << "Lexer error: error while parsing number at line " << lineNumber
-                              << std::endl;
-                    return state_ = false;
-                }
-            }
-            currentToken.type = Token::tt_number;
-            currentToken.name = number;
-            content_.push_back(currentToken);
-            continue;
-        }
+void Lexer::getIdentifier(std::string::const_iterator &it, Token &currentToken)
+{
+    if (isalpha(*it)) {
+        std::string identifier;
 
-        if (currentToken.type == Token::tt_unknown) {
-            std::cerr << "Lexer error: unknown symbol <" << *it << "> at line " << lineNumber
-                      << std::endl;
-            return state_ = false;
+        while (isalpha(*it) || isdigit(*it) || *it == '_')
+            identifier += *(it++);
+        --it;
+
+        if (identifier == "def")
+            currentToken.type = Token::tt_def;
+        else if (identifier == "end")
+            currentToken.type = Token::tt_end;
+        else if (identifier == "while")
+            currentToken.type = Token::tt_while;
+        else if (identifier == "if")
+            currentToken.type = Token::tt_if;
+        else if (identifier == "return")
+            currentToken.type = Token::tt_return;
+        else if (identifier == "print")
+            currentToken.type = Token::tt_print;
+        else if (identifier == "read")
+            currentToken.type = Token::tt_read;
+        else {
+            currentToken.type = Token::tt_identifier;
+            currentToken.name = identifier;
         }
     }
-    return true;
+}
+
+void Lexer::getNumber(std::string::const_iterator &it, Token &currentToken)
+{
+    if (isdigit(*it)) {
+        std::string number;
+        while (isdigit(*it))
+            number += *(it++);
+
+        if (isalpha(*it) || *it == '_')
+            throw LexerError("not a number", currentToken.lineNumber);
+        
+        --it;
+        currentToken.type = Token::tt_number;
+        currentToken.name = number;
+    }
+}
+
+void Lexer::processLine(std::string const &str, size_t lineNumber)
+{
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+        if (*it == '#')
+            break;
+        if (isspace(*it))
+            continue;
+
+        Token currentToken(Token::tt_unknown, "", lineNumber);
+
+        getOperator(it, currentToken);
+        if (currentToken.type == Token::tt_unknown)
+            getIdentifier(it, currentToken);
+        if (currentToken.type == Token::tt_unknown)
+            getNumber(it, currentToken);
+
+        if (currentToken.type == Token::tt_unknown) {
+            std::stringstream ss;
+            ss << "unknown symbol <" << *it << ">";
+            throw LexerError(ss.str(), lineNumber);
+        }
+        content_.push_back(currentToken);
+    }
+    content_.push_back(Token(Token::tt_cr, "", lineNumber));
 }

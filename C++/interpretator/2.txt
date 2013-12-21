@@ -1,0 +1,12 @@
+# fib.pp
+# вычисление n-того числа Фибоначчи на PP n=0
+read n
+a = 1
+b = 1
+while n > 1:
+    t = b
+    b = b+a
+    a = t
+    n = n-1
+end
+print aa
