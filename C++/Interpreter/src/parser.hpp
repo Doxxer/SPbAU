@@ -8,6 +8,12 @@
 #include "ast.hpp"
 
 struct Program {
+
+    Program(ExpressionPtr const &ep, std::map<std::string, FunctionPtr> const &funcs)
+        : EntryPoint(ep), Functions(funcs)
+    {
+    }
+
     ExpressionPtr EntryPoint;
     std::map<std::string, FunctionPtr> Functions;
 };
@@ -28,12 +34,9 @@ private:
 
     ExpressionPtr parse_instruction();
     FunctionPtr parse_function_defenition();
-
     ExpressionPtr parse_primary();
     ExpressionPtr parse_value();
-
     ExpressionPtr parse_identifier();
-
     ExpressionPtr parse_number();
     ExpressionPtr parse_read();
     ExpressionPtr parse_print();

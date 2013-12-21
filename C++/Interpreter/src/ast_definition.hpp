@@ -11,10 +11,8 @@ class Call;
 class Return;
 class BinaryExpression;
 class Condition;
-
 class FunctionDefinition;
 class VariableDefinition;
-
 class Expressions;
 class Program;
 class If;

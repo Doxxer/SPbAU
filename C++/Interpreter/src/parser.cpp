@@ -25,7 +25,7 @@ Program Parser::parse()
             throw ParserError(lexer_.peek()->lineNumber);
     }
 
-    return { ExpressionPtr(new AST::Program(content)), functions };
+    return Program(ExpressionPtr(new AST::Program(content)), functions);
 }
 
 ExpressionPtr Parser::parse_instruction()

@@ -21,7 +21,7 @@ int main(int argc, const char *argv[])
     {
         Parser parser(argv[1]);
         Program program = parser.parse();
-    
+
         Evaluator evaluator(program);
         evaluator.eval();
     }
@@ -35,7 +35,7 @@ int main(int argc, const char *argv[])
         cerr << "Syntax error at line #" << e.line() << ": " << e.what() << endl;
         return 1;
     }
-    catch (RuntimeError const& e)
+    catch (RuntimeError const &e)
     {
         cerr << "Runtime error at line #" << e.line() << ": " << e.what() << endl;
         return 1;

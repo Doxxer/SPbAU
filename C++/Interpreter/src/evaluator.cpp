@@ -9,7 +9,9 @@ using std::endl;
 
 int Evaluator::visit(AST::Program const &a)
 {
-    for (auto it = a.content().begin(); it != a.content().end(); ++it) {
+    for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
+         it != a.content().end();
+         ++it) {
         try
         {
             (*it)->accept(*this);
@@ -24,7 +26,9 @@ int Evaluator::visit(AST::Program const &a)
 
 int Evaluator::visit(AST::FunctionDefinition const &a)
 {
-    for (auto it = a.content().begin(); it != a.content().end(); ++it) {
+    for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
+         it != a.content().end();
+         ++it) {
         try
         {
             (*it)->accept(*this);
@@ -83,7 +87,9 @@ int Evaluator::visit(AST::If const &a)
 
     int value = a.Condition()->accept(*this);
     if (value) {
-        for (auto it = a.content().begin(); it != a.content().end(); ++it)
+        for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
+             it != a.content().end();
+             ++it)
             value = (*it)->accept(*this);
     }
     return value;
@@ -94,7 +100,9 @@ int Evaluator::visit(AST::While const &a)
     int condition = a.Condition()->accept(*this);
     int value = 0;
     while (condition) {
-        for (auto it = a.content().begin(); it != a.content().end(); ++it)
+        for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
+             it != a.content().end();
+             ++it)
             value = (*it)->accept(*this);
         condition = a.Condition()->accept(*this);
     }
@@ -103,7 +111,7 @@ int Evaluator::visit(AST::While const &a)
 
 int Evaluator::visit(AST::Call const &a)
 {
-    auto it = functions_.find(a.Name());
+    std::map<std::string, FunctionPtr>::iterator it = functions_.find(a.Name());
     if (it == functions_.end())
         throw UndefinedFunctionError(a.LineNumber(), a.Name());
 

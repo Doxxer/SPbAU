@@ -120,7 +120,7 @@ void Lexer::getNumber(std::string::const_iterator &it, Token &currentToken)
 
         if (isalpha(*it) || *it == '_')
             throw LexerError("not a number", currentToken.lineNumber);
-        
+
         --it;
         currentToken.type = Token::tt_number;
         currentToken.name = number;

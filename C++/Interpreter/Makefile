@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic
+CXXFLAGS = -std=c++03 -Wall -Wextra -pedantic
 APPNAME = inter.out
 srcdir = src
 builddir = ./bin
