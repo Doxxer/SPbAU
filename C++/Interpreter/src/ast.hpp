@@ -2,13 +2,13 @@
 #define AST_HPP
 
 #include <vector>
-#include <memory>
+#include <tr1/memory>
 #include <cstddef>
 #include "visitor.hpp"
 #include "ast_forward.hpp"
 
-typedef std::__1::shared_ptr<AST::Expression> ExpressionPtr;
-typedef std::__1::shared_ptr<AST::FunctionDefinition> FunctionPtr;
+typedef std::tr1::shared_ptr<AST::Expression> ExpressionPtr;
+typedef std::tr1::shared_ptr<AST::FunctionDefinition> FunctionPtr;
 typedef std::vector<ExpressionPtr> ExpressionPtrs;
 
 namespace AST {

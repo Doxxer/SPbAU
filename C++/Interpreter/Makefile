@@ -1,5 +1,5 @@
-CXX = clang++
-CXXFLAGS = -std=c++03 -stdlib=libc++ -Wall -Wextra -pedantic
+CXX = g++
+CXXFLAGS = -std=c++03 -Wall -Wextra -pedantic
 APPNAME = PP
 srcdir = src
 builddir = ./bin

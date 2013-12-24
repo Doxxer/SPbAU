@@ -7,7 +7,7 @@
 
 Lexer::Lexer(std::string const &sourceFileName)
 {
-    std::ifstream inputFile_(sourceFileName, std::ifstream::in);
+    std::ifstream inputFile_(sourceFileName.c_str(), std::ifstream::in);
 
     size_t lineNumber = 1;
     for (std::string line; std::getline(inputFile_, line); ++lineNumber) {       
