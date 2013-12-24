@@ -1,11 +1,10 @@
 #ifndef VISITOR_HPP
 #define VISITOR_HPP
 
-#include "ast_definition.hpp"
+#include "ast_forward.hpp"
 
 class Visitor {
 public:
-    virtual int visit(AST::Program const &) = 0;
     virtual int visit(AST::FunctionDefinition const &) = 0;
     virtual int visit(AST::VariableDefinition const &) = 0;
     virtual int visit(AST::Number const &) = 0;

@@ -4,7 +4,6 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 #include "evaluator.hpp"
-#include "errors.hpp"
 
 using std::cout;
 using std::cerr;

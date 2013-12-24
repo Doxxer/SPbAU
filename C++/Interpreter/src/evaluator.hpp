@@ -8,6 +8,7 @@
 #include "ast.hpp"
 #include "visitor.hpp"
 #include "parser.hpp"
+#include "interpreter_error.hpp"
 
 class FunctionReturn {
 public:
@@ -24,6 +25,45 @@ private:
     int value_;
 };
 
+class RuntimeError : public InterpreterError {
+public:
+    explicit RuntimeError(size_t line, std::string const &message = "")
+        : InterpreterError(line, message)
+    {
+    }
+};
+
+class UndefinedVariableError : public RuntimeError {
+public:
+    explicit UndefinedVariableError(size_t line, std::string const &name)
+        : RuntimeError(line, "undefined variable " + name)
+    {
+    }
+};
+
+class UndefinedFunctionError : public RuntimeError {
+public:
+    explicit UndefinedFunctionError(size_t line, std::string const &name)
+        : RuntimeError(line, "undefined function " + name)
+    {
+    }
+};
+
+class ArgumentsNumberMismatchError : public RuntimeError {
+public:
+    explicit ArgumentsNumberMismatchError(size_t line, std::string const &name)
+        : RuntimeError(line, "arguments number mismatch for " + name)
+    {
+    }
+};
+
+class DivizionByZeroError : public RuntimeError {
+public:
+    explicit DivizionByZeroError(size_t line) : RuntimeError(line, "divizion by zero")
+    {
+    }
+};
+
 class Evaluator : public Visitor {
 public:
     explicit Evaluator(Program const &program)
@@ -36,7 +76,6 @@ public:
         entryPoint_->accept(*this);
     }
 
-    int visit(AST::Program const &);
     int visit(AST::FunctionDefinition const &);
     int visit(AST::VariableDefinition const &);
     int visit(AST::Number const &);
@@ -59,15 +98,15 @@ private:
     bool get_variable_value(std::string const &name, int &value)
     {
         if (!locale_variables_.empty()) {
-            std::map<std::string, int> locals = locale_variables_.top();
-            std::map<std::string, int>::iterator var = locals.find(name);
+            std::map<std::string, int> const & locals = locale_variables_.top();
+            std::map<std::string, int>::const_iterator var = locals.find(name);
             if (var != locals.end()) {
                 value = var->second;
                 return true;
             }
         }
 
-        std::map<std::string, int>::iterator var = global_variables_.find(name);
+        std::map<std::string, int>::const_iterator var = global_variables_.find(name);
         if (var != global_variables_.end()) {
             value = var->second;
             return true;

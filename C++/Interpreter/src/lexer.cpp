@@ -4,24 +4,18 @@
 #include <sstream>
 
 #include "lexer.hpp"
-#include "errors.hpp"
 
 Lexer::Lexer(std::string const &sourceFileName)
 {
     std::ifstream inputFile_(sourceFileName, std::ifstream::in);
-    std::string line;
 
     size_t lineNumber = 1;
-    for (; !inputFile_.eof(); ++lineNumber) {
-        std::getline(inputFile_, line);
-        if (line.length() == 0)
-            continue;
-
-        processLine(line, lineNumber);
+    for (std::string line; std::getline(inputFile_, line); ++lineNumber) {       
+        if (line.length() != 0)
+            processLine(line, lineNumber);        
     }
     content_.push_back(Token(Token::tt_eof, "", lineNumber));
     position_ = content_.begin();
-    inputFile_.close();
 }
 
 void Lexer::getOperator(std::string::const_iterator &it, Token &currentToken)
@@ -76,7 +70,7 @@ void Lexer::getOperator(std::string::const_iterator &it, Token &currentToken)
                 currentToken.type = Token::tt_inequality;
                 ++it;
             } else
-                throw LexerError("expected '=' after '!'", currentToken.lineNumber);
+                throw LexerError(currentToken.lineNumber, "expected '=' after '!'");
             break;
     }
 }
@@ -119,7 +113,7 @@ void Lexer::getNumber(std::string::const_iterator &it, Token &currentToken)
             number += *(it++);
 
         if (isalpha(*it) || *it == '_')
-            throw LexerError("not a number", currentToken.lineNumber);
+            throw LexerError(currentToken.lineNumber, "not a number");
 
         --it;
         currentToken.type = Token::tt_number;
@@ -146,7 +140,7 @@ void Lexer::processLine(std::string const &str, size_t lineNumber)
         if (currentToken.type == Token::tt_unknown) {
             std::stringstream ss;
             ss << "unknown symbol <" << *it << ">";
-            throw LexerError(ss.str(), lineNumber);
+            throw LexerError(lineNumber, ss.str());
         }
         content_.push_back(currentToken);
     }

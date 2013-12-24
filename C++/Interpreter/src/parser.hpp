@@ -6,6 +6,15 @@
 #include "lexer.hpp"
 #include "token.hpp"
 #include "ast.hpp"
+#include "interpreter_error.hpp"
+
+class ParserError : public InterpreterError {
+public:
+    explicit ParserError(size_t line, std::string const &message = "")
+        : InterpreterError(line, message)
+    {
+    }
+};
 
 struct Program {
 

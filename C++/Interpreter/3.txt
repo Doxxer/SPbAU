@@ -7,4 +7,4 @@ def fib(n):
     return n * fib(n-1) # ok, рекурсивные функции допустимы
 end
 
-print fib(3)
+print fib(8)

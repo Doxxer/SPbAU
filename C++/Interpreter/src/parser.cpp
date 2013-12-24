@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <map>
 #include "parser.hpp"
-#include "errors.hpp"
 
 Program Parser::parse()
 {
@@ -25,7 +24,9 @@ Program Parser::parse()
             throw ParserError(lexer_.peek()->lineNumber);
     }
 
-    return Program(ExpressionPtr(new AST::Program(content)), functions);
+    return Program(
+        ExpressionPtr(new AST::FunctionDefinition("", std::vector<std::string>(), content)),
+        functions);
 }
 
 ExpressionPtr Parser::parse_instruction()
@@ -217,8 +218,8 @@ ExpressionPtr Parser::parse_identifier()
 ExpressionPtr Parser::parse_variable_definition()
 {
     // is it a=2 or a(2) ?
-    if (lexer_.peek()->type != Token::tt_identifier ||
-        lexer_.peek_next()->type == Token::tt_opening_bracket)
+    if (lexer_.peek(0)->type != Token::tt_identifier ||
+        lexer_.peek(1)->type == Token::tt_opening_bracket)
         return ExpressionPtr();
 
     std::string name = lexer_.get()->name;

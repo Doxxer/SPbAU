@@ -1,9 +1,9 @@
 CXX = clang++
 CXXFLAGS = -std=c++03 -Wall -Wextra -pedantic
-APPNAME = inter.out
+APPNAME = PP
 srcdir = src
 builddir = ./bin
-in = 6.txt
+in = 3.txt
 
 all: createdir $(builddir)/main.o $(builddir)/lexer.o $(builddir)/parser.o $(builddir)/evaluator.o
 	$(CXX) $(builddir)/main.o $(builddir)/lexer.o $(builddir)/parser.o $(builddir)/evaluator.o -o $(builddir)/$(APPNAME)

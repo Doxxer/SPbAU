@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <string>
-#include <iostream>
 
 struct Token {
     enum Type {
@@ -34,23 +33,6 @@ struct Token {
     Token(Type type_ = Token::tt_unknown, std::string const &name_ = "", size_t lineNumber_ = 0)
         : type(type_), name(name_), lineNumber(lineNumber_)
     {
-    }
-
-    Token(Token const &other) : type(other.type), name(other.name), lineNumber(other.lineNumber)
-    {
-    }
-
-    void swap(Token &other)
-    {
-        std::swap(other.type, type);
-        std::swap(other.name, name);
-        std::swap(other.lineNumber, lineNumber);
-    }
-    Token &operator=(Token const &other)
-    {
-        if (this != &other)
-            Token(other).swap(*this);
-        return *this;
     }
 
     Type type;

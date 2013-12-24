@@ -1,5 +1,4 @@
 #include "evaluator.hpp"
-#include "errors.hpp"
 
 #include <iostream>
 
@@ -7,27 +6,10 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-int Evaluator::visit(AST::Program const &a)
-{
-    for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
-         it != a.content().end();
-         ++it) {
-        try
-        {
-            (*it)->accept(*this);
-        }
-        catch (FunctionReturn const &r)
-        {
-            return r.Value();
-        }
-    }
-    return 0;
-}
-
 int Evaluator::visit(AST::FunctionDefinition const &a)
 {
-    for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
-         it != a.content().end();
+    for (std::vector<ExpressionPtr>::const_iterator it = a.begin();
+         it != a.end();
          ++it) {
         try
         {
@@ -87,8 +69,8 @@ int Evaluator::visit(AST::If const &a)
 
     int value = a.Condition()->accept(*this);
     if (value) {
-        for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
-             it != a.content().end();
+        for (std::vector<ExpressionPtr>::const_iterator it = a.begin();
+             it != a.end();
              ++it)
             value = (*it)->accept(*this);
     }
@@ -100,8 +82,8 @@ int Evaluator::visit(AST::While const &a)
     int condition = a.Condition()->accept(*this);
     int value = 0;
     while (condition) {
-        for (std::vector<ExpressionPtr>::const_iterator it = a.content().begin();
-             it != a.content().end();
+        for (std::vector<ExpressionPtr>::const_iterator it = a.begin();
+             it != a.end();
              ++it)
             value = (*it)->accept(*this);
         condition = a.Condition()->accept(*this);
@@ -111,7 +93,7 @@ int Evaluator::visit(AST::While const &a)
 
 int Evaluator::visit(AST::Call const &a)
 {
-    std::map<std::string, FunctionPtr>::iterator it = functions_.find(a.Name());
+    std::map<std::string, FunctionPtr>::const_iterator it = functions_.find(a.Name());
     if (it == functions_.end())
         throw UndefinedFunctionError(a.LineNumber(), a.Name());
 

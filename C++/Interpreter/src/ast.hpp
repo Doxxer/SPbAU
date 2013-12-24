@@ -5,10 +5,10 @@
 #include <memory>
 #include <cstddef>
 #include "visitor.hpp"
-#include "ast_definition.hpp"
+#include "ast_forward.hpp"
 
-typedef std::shared_ptr<AST::Expression> ExpressionPtr;
-typedef std::shared_ptr<AST::FunctionDefinition> FunctionPtr;
+typedef std::__1::shared_ptr<AST::Expression> ExpressionPtr;
+typedef std::__1::shared_ptr<AST::FunctionDefinition> FunctionPtr;
 typedef std::vector<ExpressionPtr> ExpressionPtrs;
 
 namespace AST {
@@ -39,26 +39,18 @@ public:
     Expressions(ExpressionPtrs const &content) : Expression(0), content_(content)
     {
     }
-
-    ExpressionPtrs const &content() const
+    
+    std::vector<ExpressionPtr>::const_iterator begin() const
     {
-        return content_;
+        return content_.begin();
+    }
+    std::vector<ExpressionPtr>::const_iterator end() const
+    {
+        return content_.end();
     }
 
 private:
     ExpressionPtrs content_;
-};
-
-class Program : public Expressions {
-public:
-    Program(ExpressionPtrs const &content) : Expressions(content)
-    {
-    }
-
-    int accept(Visitor &v)
-    {
-        return v.visit(*this);
-    }
 };
 
 class If : public Expressions {
