@@ -19,14 +19,14 @@ class Lexer {
 public:
     Lexer(std::string const &sourceFileName);
 
-    Token const *peek(size_t offset = 0)
+    Token const &peek(size_t offset = 0)
     {
-        return (position_ + offset) != content_.end() ? &*(position_ + offset) : 0;
+        return (position_ + offset) != content_.end() ? *(position_ + offset) : Token::EOFToken;
     }
     
-    Token const *get()
+    Token const &get()
     {
-        return position_ != content_.end() ? &*position_++ : 0;
+        return position_ != content_.end() ? *position_++ : Token::EOFToken;
     }
 
 private:

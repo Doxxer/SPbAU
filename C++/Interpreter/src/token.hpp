@@ -30,6 +30,8 @@ struct Token {
         tt_unknown          //
     };
 
+    static Token const &EOFToken;
+
     Token(Type type_ = Token::tt_unknown, std::string const &name_ = "", size_t lineNumber_ = 0)
         : type(type_), name(name_), lineNumber(lineNumber_)
     {
@@ -39,4 +41,5 @@ struct Token {
     std::string name;
     size_t lineNumber;
 };
+
 #endif /* end of include guard: TOKEN_HPP */
